@@ -190,7 +190,7 @@ END;
 CREATE INDEX addresses_postalCode_idx ON addresses(postalCode);
 CREATE INDEX addresses_town_idx ON addresses(town);
 
-
+commit;
 
 
 
