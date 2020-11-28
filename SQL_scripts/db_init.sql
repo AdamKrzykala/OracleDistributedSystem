@@ -1,197 +1,195 @@
+--TABLES CONFIGURATION----------------------------------------------------------
 --Customers table creating
 BEGIN
     BEGIN
-         EXECUTE IMMEDIATE 'DROP TABLE customers';
+         EXECUTE IMMEDIATE 'DROP TABLE Klienci';
     EXCEPTION
          WHEN OTHERS THEN
                 IF SQLCODE != -942 THEN
                      RAISE;
                 END IF;
     END;
-    EXECUTE IMMEDIATE 'CREATE TABLE customers (
-            CustomerID      NUMBER(38)      generated always as identity (START with 1 INCREMENT by 1),
-            AddressID       NUMBER (38)     not null,
-            FirstName       VARCHAR(30)     not null,
-    SecondName      VARCHAR(30)     not null,
-    LastName        VARCHAR(30)     not null,
-    PESEL           VARCHAR(11)     not null,
-    telephone       VARCHAR(9)      not null,
-    cathegory       CHAR(1)         not null,
-    
-    CONSTRAINT customer_pk PRIMARY KEY (CustomerID)
+    EXECUTE IMMEDIATE 'CREATE TABLE Klienci (
+        ID_Klienta      INT             generated always as identity (START with 1 INCREMENT by 1),
+        ID_Adresu       INT             not null,
+        Imie            VARCHAR(30)     not null,
+        Nazwisko        VARCHAR(30)     not null,
+        DrugieImie      VARCHAR(30)     not null,
+        PESEL           VARCHAR(11)     not null,
+        NumerTel        VARCHAR(9)      not null,
+        KatPrawaJazdy   CHAR(1)         not null,
+        PRIMARY KEY(ID_Klienta)
     )';
 END;
 /
-----Indexes to customers table creating
-CREATE INDEX customers_AddressID_idx ON customers(AddressID);
-CREATE INDEX customers_PESEL_idx ON customers(PESEL);
-CREATE INDEX customers_telephone_idx ON customers(telephone);
-
 --Vehicles table creating
 BEGIN
     BEGIN
-         EXECUTE IMMEDIATE 'DROP TABLE vehicles';
+         EXECUTE IMMEDIATE 'DROP TABLE Pojazdy';
     EXCEPTION
          WHEN OTHERS THEN
                 IF SQLCODE != -942 THEN
                      RAISE;
                 END IF;
     END;
-    EXECUTE IMMEDIATE 'CREATE TABLE vehicles (
-    VehicleID       NUMBER(38)      generated always as identity (START with 1 INCREMENT by 1),
-    ModelID         NUMBER(38)      not null,
-    vinNumber       VARCHAR(17)     not null,
-    evidenceNumber  VARCHAR(9)      not null,
-    productionYear  NUMBER(38)      not null,
-    mileage         NUMBER(38)      not null, 
-    nextReview      DATE            not null,
-    damaged         VARCHAR(1)      not null,
-    pricePerDay     FLOAT(2)        not null,
-
-    CONSTRAINT vehicle_pk PRIMARY KEY (VehicleID)
+    EXECUTE IMMEDIATE 'CREATE TABLE Pojazdy (
+        ID_Pojazdu              INT             generated always as identity (START with 1 INCREMENT by 1),
+        ID_Modelu               INT             not null,
+        NumerVIN                VARCHAR(17)     not null,
+        NumerRejestracyjny      VARCHAR(9)      not null,
+        Rocznik                 DATE            not null,
+        Przebieg                INT             not null, 
+        DataWaznosciPrzegladu   DATE            null,
+        Uszkodzony              CHAR(1)         null,
+        PRIMARY KEY(ID_pojazdu)
     )';
 END;
 /
---Indexes to vehicles table creating
-CREATE INDEX vehicles_ModelID_idx ON vehicles(ModelID);
-CREATE INDEX vehicles_vinNumber_idx ON vehicles(vinNumber);
-CREATE INDEX vehicles_evidenceNumber_idx ON vehicles(evidenceNumber);
-
 --Models table creating
 BEGIN
     BEGIN
-         EXECUTE IMMEDIATE 'DROP TABLE models';
+         EXECUTE IMMEDIATE 'DROP TABLE Modele';
     EXCEPTION
          WHEN OTHERS THEN
-                IF SQLCODE != -942 THEN
-                     RAISE;
-                END IF;
+            IF SQLCODE != -942 THEN
+                 RAISE;
+            END IF;
     END;
-    EXECUTE IMMEDIATE 'CREATE TABLE models (
-    ModelID         NUMBER(38)      generated always as identity (START with  1 INCREMENT by 1),
-    ModelName       VARCHAR(30)     not null,
-    engineCapacity  NUMBER(38)      not null,
-    cathegory       VARCHAR(1)      not null,
-    producent       VARCHAR(20)     not null,
-    
-    CONSTRAINT model_pk PRIMARY KEY (ModelID)
+    EXECUTE IMMEDIATE 'CREATE TABLE Modele (
+        ID_Modelu               INT             generated always as identity (START with  1 INCREMENT by 1),
+        Model                   VARCHAR(30)     not null,
+        PojemnoscSilnika        INT             not null,
+        SrednieSpalanie         INT             null,
+        KategoriaPrawaJazdy     CHAR(1)         not null,
+        StawkaZaDzien           FLOAT           not null,
+        PRIMARY KEY(ID_Modelu)
     )';
 END;
 /
-
---Indexes to models table creating
-CREATE INDEX models_ModelName_idx ON models(ModelName);
-CREATE INDEX models_producent_idx ON models(producent);
-
 --Rentals table creating
 BEGIN
     BEGIN
-        EXECUTE IMMEDIATE 'DROP TABLE rentals';
+        EXECUTE IMMEDIATE 'DROP TABLE Wypozyczenia';
     EXCEPTION
          WHEN OTHERS THEN
-                IF SQLCODE != -942 THEN
-                     RAISE;
-                END IF;
+            IF SQLCODE != -942 THEN
+                 RAISE;
+            END IF;
     END;
-    EXECUTE IMMEDIATE 'CREATE TABLE rentals (
-    RentalID        NUMBER(38)      generated always as identity (START with 1 INCREMENT by 1),
-    RentHouseID     NUMBER(38)      not null,
-    CustomerID      NUMBER(38)      not null,
-    VehicleID       NUMBER(38)      not null,
-    ReturnID        NUMBER(38)      not null,
-    rentalDate      DATE            not null,
-    plannedReturn   DATE            not null,
-    deposit         NUMBER(38)      not null,  
-    
-    CONSTRAINT rental_pk PRIMARY KEY (RentalID)
+    EXECUTE IMMEDIATE 'CREATE TABLE Wypozyczenia (
+        ID_Wypozyczenia         INT         generated always as identity (START with 1 INCREMENT by 1),
+        ID_Wypozyczalni         INT         not null,
+        ID_Klienta              INT         not null,
+        ID_Pojazdu              INT         not null,
+        ID_Zwrotu               INT         not null,
+        TerminWypozyczenia      DATE        not null,
+        PlanowanyTerminZwrotu   DATE        not null,
+        PobranaKaucja           FLOAT       not null,
+        PRIMARY KEY(ID_Wypozyczenia)
     )';
 END;
 /
-
---Indexes to rentals table creating 
-CREATE INDEX rentals_RentHouseID_idx ON rentals(RentHouseID);
-CREATE INDEX rentals_CustomerID_idx ON rentals(CustomerID);
-CREATE INDEX rentals_VehicleID_idx ON rentals(VehicleID);
-CREATE INDEX rentals_ReturnID_idx ON rentals(ReturnID);
-
 --Returns table creating
 BEGIN
     BEGIN
-        EXECUTE IMMEDIATE 'DROP TABLE returns';
+        EXECUTE IMMEDIATE 'DROP TABLE Zwroty';
     EXCEPTION
          WHEN OTHERS THEN
-                IF SQLCODE != -942 THEN
-                     RAISE;
-                END IF;
+            IF SQLCODE != -942 THEN
+                 RAISE;
+            END IF;
     END;
-    EXECUTE IMMEDIATE 'CREATE TABLE returns (
-    ReturnID        NUMBER(38)      not null,
-    RentalHouseID   NUMBER(38)      not null,
-    returnDate      DATE            not null,
-    paid            VARCHAR(1)      not null,
-    penalty         FLOAT(2)        null,
-    depositReturn   VARCHAR(1)      not null,
-    
-    CONSTRAINT return_pk PRIMARY KEY (ReturnID)
+    EXECUTE IMMEDIATE 'CREATE TABLE Zwroty (
+        ID_Zwrotu           INT         generated always as identity (START with 1 INCREMENT by 1),
+        ID_Wypozyczalni     INT         not null,
+        TerminZwrotu        DATE        not null,
+        Zaplacono           CHAR(1)     not null,
+        KaraZaSpoznienie    FLOAT(2)    null,
+        ZwrotKaucji         CHAR(1)     not null,
+        PRIMARY KEY(ID_Zwrotu)
     )';
 END;
 /
-
---Creating indexes to returns table
-CREATE INDEX returns_RentalHouseID_idx ON returns(RentalHouseID);
-
 --RentalHouses table creating
 BEGIN
     BEGIN
-        EXECUTE IMMEDIATE 'DROP TABLE rentalHouses';
+        EXECUTE IMMEDIATE 'DROP TABLE Wypozyczalnie';
     EXCEPTION
          WHEN OTHERS THEN
-                IF SQLCODE != -942 THEN
-                     RAISE;
-                END IF;
+            IF SQLCODE != -942 THEN
+                 RAISE;
+            END IF;
     END;
-    EXECUTE IMMEDIATE 'CREATE TABLE rentalHouses (
-    RentalHouseID   NUMBER(38)      not null,
-    AddressID       NUMBER(38)      not null,
-    freePlaces      NUMBER(38)      not null,
-    
-    CONSTRAINT rentalHouse_pk PRIMARY KEY(RentalHouseID)
+    EXECUTE IMMEDIATE 'CREATE TABLE Wypozyczalnie (
+        ID_Wypozyczalni     INT       generated always as identity (START with 1 INCREMENT by 1),
+        ID_Adresu           INT       not null,
+        WolneMiejsca        INT       not null,
+        PRIMARY KEY(ID_Wypozyczalni)
     )';
 END;
 /
-
---Creating indexes to rentalHouses table
-CREATE INDEX rentalHouses_AddressID_idx ON rentalHouses(AddressID);
-
 --Address table creating
 BEGIN
     BEGIN
-        EXECUTE IMMEDIATE 'DROP TABLE addresses';
+        EXECUTE IMMEDIATE 'DROP TABLE Adresy';
     EXCEPTION
          WHEN OTHERS THEN
-                IF SQLCODE != -942 THEN
-                     RAISE;
-                END IF;
+            IF SQLCODE != -942 THEN
+                 RAISE;
+            END IF;
     END;
-    EXECUTE IMMEDIATE 'CREATE TABLE addresses (
-    AddressID       NUMBER(38)      not null,
-    postalCode      VARCHAR(6)      not null,
-    town            VARCHAR(20)     not null,
-    street          VARCHAR(30)     not null,
-    houseNumber     NUMBER(38)      not null,
-    homeNumber      NUMBER(38)      null,
-    
-    CONSTRAINT address_pk PRIMARY KEY (AddressID)
+    EXECUTE IMMEDIATE 'CREATE TABLE Adresy (
+        ID_Adresu           INT             generated always as identity (START with 1 INCREMENT by 1),
+        KodPocztowy         VARCHAR(6)      not null,
+        Miejscowosc         VARCHAR(30)     not null,
+        Ulica               VARCHAR(30)     not null,
+        NumerDomu           INT             not null,
+        NumerMieszkania     INT             null,
+        PRIMARY KEY(ID_Adresu)
     )';
 END;
 /
+--FOREIGN KEYS CONFIGURATION----------------------------------------------------
+BEGIN
+    EXECUTE IMMEDIATE 'ALTER TABLE Klienci ADD CONSTRAINT fk_KlientAdres FOREIGN KEY (ID_Adresu) REFERENCES Adresy(ID_Adresu)';
+    EXECUTE IMMEDIATE 'ALTER TABLE Pojazdy ADD CONSTRAINT fk_PojazdModel FOREIGN KEY (ID_Modelu) REFERENCES Modele(ID_Modelu)';
+    EXECUTE IMMEDIATE 'ALTER TABLE Wypozyczenia ADD CONSTRAINT fk_WypozyczenieWypozyczalnia FOREIGN KEY (ID_Wypozyczalni) REFERENCES Wypozyczalnie(ID_Wypozyczalni)';
+    EXECUTE IMMEDIATE 'ALTER TABLE Wypozyczenia ADD CONSTRAINT fk_WypozyczenieKlient FOREIGN KEY (ID_Klienta) REFERENCES Klienci(ID_Klienta)';
+    EXECUTE IMMEDIATE 'ALTER TABLE Wypozyczenia ADD CONSTRAINT fk_WypozyczeniePojazd FOREIGN KEY (ID_Pojazdu) REFERENCES Pojazdy(ID_Pojazdu)';
+    EXECUTE IMMEDIATE 'ALTER TABLE Wypozyczenia ADD CONSTRAINT fk_WypozyczenieZwrot FOREIGN KEY (ID_Zwrotu) REFERENCES Zwroty(ID_Zwrotu)';
+    EXECUTE IMMEDIATE 'ALTER TABLE Zwroty ADD CONSTRAINT fk_ZwrotWypozyczalnia FOREIGN KEY (ID_Wypozyczalni) REFERENCES Wypozyczalnie(ID_Wypozyczalni)';
+    EXECUTE IMMEDIATE 'ALTER TABLE Wypozyczalnie ADD CONSTRAINT fk_WypozyczalniaAdres FOREIGN KEY (ID_Adresu) REFERENCES Adresy(ID_Adresu)';
+END;
+/
+--INDEXES CONFIGURATION---------------------------------------------------------
+----Indexes to customers table creating
+CREATE INDEX idx_Klient_ID_Adresu   ON Klienci(ID_Adresu);
+CREATE INDEX idx_Klient_PESEL       ON Klienci(PESEL);
+CREATE INDEX idx_Klient_NumerTel    ON Klienci(NumerTel);
+
+--Indexes to vehicles table creating
+CREATE INDEX idx_Pojazd_ID_Modelu              ON Pojazdy(ID_Modelu);
+CREATE INDEX idx_Pojazd_NumerVIN               ON Pojazdy(NumerVIN);
+CREATE INDEX idx_Pojazd_NumerRejestracyjny     ON Pojazdy(NumerRejestracyjny);
+
+--Indexes to models table creating
+CREATE INDEX idx_Model_Model_idx    ON Modele(Model);
+
+--Indexes to rentals table creating 
+CREATE INDEX idx_Wypozyczenie_ID_Wypozyczalni   ON Wypozyczenia(ID_Wypozyczalni);
+CREATE INDEX idx_Wypozyczenie_ID_Klienta        ON Wypozyczenia(ID_Klienta);
+CREATE INDEX idx_Wypozyczenie_ID_Pojazdu        ON Wypozyczenia(ID_Pojazdu);
+CREATE INDEX idx_Wypozyczenie_ID_Zwrotu         ON Wypozyczenia(ID_Zwrotu);
+
+--Creating indexes to returns table
+CREATE INDEX idx_Zwrot_ID_Wypozyczalni      ON Zwroty(ID_Wypozyczalni);
+
+--Creating indexes to rentalHouses table
+CREATE INDEX idx_Wypozyczalnia_ID_Adresu    ON Wypozyczalnie(ID_Adresu);
 
 --Creating indexes to addresses table
-CREATE INDEX addresses_postalCode_idx ON addresses(postalCode);
-CREATE INDEX addresses_town_idx ON addresses(town);
+CREATE INDEX idx_Adres_KodPocztowy      ON Adresy(KodPocztowy);
+CREATE INDEX idx_Adres_Miejscowosc      ON Adresy(Miejscowosc);
+-------------------------------------------------------------------------------
 
 commit;
-
-
-
-
