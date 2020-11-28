@@ -140,9 +140,9 @@ BEGIN
     END;
     EXECUTE IMMEDIATE 'CREATE TABLE Adresy (
         ID_Adresu           INT             generated always as identity (START with 1 INCREMENT by 1),
-        KodPocztowy         VARCHAR(6)      not null,
-        Miejscowosc         VARCHAR(30)     not null,
-        Ulica               VARCHAR(30)     not null,
+        KodPocztowy         VARCHAR2(6)     not null,
+        Miejscowosc         VARCHAR2(30)    not null,
+        Ulica               VARCHAR2(30)    not null,
         NumerDomu           INT             not null,
         NumerMieszkania     INT             null,
         PRIMARY KEY(ID_Adresu)
@@ -190,6 +190,10 @@ CREATE INDEX idx_Wypozyczalnia_ID_Adresu    ON Wypozyczalnie(ID_Adresu);
 --Creating indexes to addresses table
 CREATE INDEX idx_Adres_KodPocztowy      ON Adresy(KodPocztowy);
 CREATE INDEX idx_Adres_Miejscowosc      ON Adresy(Miejscowosc);
+--DEFAULT DATA CONFIGURATION---------------------------------------------------
+BEGIN
+   insert_new_adress('59-700', 'Boleslawiec', 'Sierpnia', 80);
+END;
 -------------------------------------------------------------------------------
 
 commit;
