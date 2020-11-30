@@ -76,6 +76,7 @@ create or replace procedure insert_new_pojazd(input_NumerVIN in pojazdy.numervin
                                               input_Przebieg in pojazdy.przebieg%TYPE,
                                               input_DataPrzegladu in pojazdy.datawaznosciprzegladu%TYPE,
                                               input_Uszkodzony in pojazdy.uszkodzony%TYPE,
+                                              input_AktualnaWypozyczalnia in pojazdy.aktualnawypozyczalnia%TYPE,
                                               input_Model in modele.model%TYPE,
                                               input_Pojemnosc in modele.pojemnoscsilnika%TYPE,
                                               input_Spalanie in modele.sredniespalanie%TYPE,
@@ -95,13 +96,14 @@ BEGIN
                                                                 input_KatPrawaJazdy in modele.kategoriaprawajazdy AND
                                                                 input_Stawka in modele.stawkazadzien;
 
-            INSERT INTO Pojazdy(id_modelu, numervin, numerrejestracyjny, rocznik, przebieg, datawaznosciprzegladu, uszkodzony)
-            VALUES(index_value, input_NumerVIN, input_NumerRej, input_Rocznik, input_Przebieg, input_DataPrzegladu, input_Uszkodzony);
+            INSERT INTO Pojazdy(id_modelu, numervin, numerrejestracyjny, rocznik, przebieg, datawaznosciprzegladu, uszkodzony, aktualnawypozyczalnia)
+            VALUES(index_value, input_NumerVIN, input_NumerRej, input_Rocznik, input_Przebieg, input_DataPrzegladu, input_Uszkodzony, input_AktualnaWypozyczalnia);
         END IF;
     END;
 END;
 /
-create or replace procedure insert_new_wypozyczalnia(input_IloscMiejsc in wypozyczalnie.wolnemiejsca%TYPE,
+create or replace procedure insert_new_wypozyczalnia(input_NumerWypozyczalni in wypozyczalnie.numerwypozyczalni%TYPE,
+                                                     input_IloscMiejsc in wypozyczalnie.wolnemiejsca%TYPE,
                                                      input_KodPocztowy in adresy.kodpocztowy%TYPE,
                                                      input_Miejscowosc in adresy.miejscowosc%TYPE,
                                                      input_Ulica in adresy.ulica%TYPE,
@@ -124,9 +126,27 @@ BEGIN
                                                                 adresy.ulica = input_Ulica AND
                                                                 adresy.numerdomu = input_NumerDomu AND
                                                                 adresy.numermieszkania = input_NumerMieszkania;
-            INSERT INTO Wypozyczalnie(id_adresu, wolnemiejsca)
-            VALUES(index_value, input_IloscMiejsc);
+            INSERT INTO Wypozyczalnie(id_adresu, wolnemiejsca, numerwypozyczalni)
+            VALUES(index_value, input_IloscMiejsc, input_NumerWypozyczalni);
         END IF;
+    END;
+END;
+/
+create or replace procedure insert_new_wypozyczenie(input_NumerWypozyczalni in wypozyczalnie.numerwypozyczalni%TYPE,
+                                                    input_PeselKlienta in klienci.pesel%TYPE,
+                                                    input_TerminWypozyczenia in wypozyczenia.terminwypozyczenia%TYPE,
+                                                    input_PlanowanyTerminZwrotu in wypozyczenia.planowanyterminzwrotu%TYPE,
+                                                    input_PobranaKaucja in wypozyczenia.pobranakaucja%TYPE) IS 
+BEGIN
+    DECLARE 
+    index_wypozyczalni INT := 0;
+    index_klienta INT := 0;
+    index_pojazdu INT := 0;
+    BEGIN
+        SELECT ID_Wypozyczalni INTO index_wypozyczalni FROM Wypozyczalnie WHERE wypozyczalnie.numerwypozyczalni = input_NumerWypozyczalni;
+        --SELECT ID_Klienta INTO index_klienta FROM Klienci WHERE 
+            --INSERT INTO Wypozyczalnie(id_adresu, wolnemiejsca)
+            --VALUES(index_value, input_IloscMiejsc);
     END;
 END;
 /

@@ -41,6 +41,7 @@ BEGIN
         Przebieg                INT             not null, 
         DataWaznosciPrzegladu   DATE            null,
         Uszkodzony              CHAR(1)         null,
+        AktualnaWypozyczalnia   INT             null,
         PRIMARY KEY(ID_pojazdu)
     )';
 END;
@@ -123,6 +124,7 @@ BEGIN
     EXECUTE IMMEDIATE 'CREATE TABLE Wypozyczalnie (
         ID_Wypozyczalni     INT       generated always as identity (START with 1 INCREMENT by 1),
         ID_Adresu           INT       not null,
+        NumerWypozyczalni   INT       not null,
         WolneMiejsca        INT       not null,
         PRIMARY KEY(ID_Wypozyczalni)
     )';
@@ -185,7 +187,8 @@ CREATE INDEX idx_Wypozyczenie_ID_Zwrotu         ON Wypozyczenia(ID_Zwrotu);
 CREATE INDEX idx_Zwrot_ID_Wypozyczalni      ON Zwroty(ID_Wypozyczalni);
 
 --Creating indexes to rentalHouses table
-CREATE INDEX idx_Wypozyczalnia_ID_Adresu    ON Wypozyczalnie(ID_Adresu);
+CREATE INDEX idx_Wypozyczalnia_ID_Adresu             ON Wypozyczalnie(ID_Adresu);
+CREATE INDEX idx_Wypozyczalnia_ID_NumerWypozyczalni  ON Wypozyczalnie(NumerWypozyczalni);
 
 --Creating indexes to addresses table
 CREATE INDEX idx_Adres_KodPocztowy      ON Adresy(KodPocztowy);
