@@ -101,5 +101,34 @@ BEGIN
     END;
 END;
 /
+create or replace procedure insert_new_wypozyczalnia(input_IloscMiejsc in wypozyczalnie.wolnemiejsca%TYPE,
+                                                     input_KodPocztowy in adresy.kodpocztowy%TYPE,
+                                                     input_Miejscowosc in adresy.miejscowosc%TYPE,
+                                                     input_Ulica in adresy.ulica%TYPE,
+                                                     input_NumerDomu in adresy.numerdomu%TYPE,
+                                                     input_NumerMieszkania in adresy.numermieszkania%TYPE) IS 
+BEGIN
+    DECLARE 
+    index_value INT := 0;
+    cnt INT := 0;
+    BEGIN
+        SELECT COUNT(*) INTO cnt FROM Adresy WHERE input_KodPocztowy = adresy.kodpocztowy AND
+                                                   input_Miejscowosc = adresy.miejscowosc AND
+                                                   input_Ulica = adresy.ulica AND
+                                                   input_NumerMieszkania = adresy.numermieszkania;
+        IF(cnt = 0) THEN
+            insert_new_adres(input_KodPocztowy, input_Miejscowosc, input_Ulica, input_NumerDomu, input_NumerMieszkania);
+            
+            SELECT ID_Adresu INTO index_value FROM Adresy WHERE adresy.kodpocztowy = input_KodPocztowy AND
+                                                                adresy.miejscowosc = input_Miejscowosc AND 
+                                                                adresy.ulica = input_Ulica AND
+                                                                adresy.numerdomu = input_NumerDomu AND
+                                                                adresy.numermieszkania = input_NumerMieszkania;
+            INSERT INTO Wypozyczalnie(id_adresu, wolnemiejsca)
+            VALUES(index_value, input_IloscMiejsc);
+        END IF;
+    END;
+END;
+/
 COMMIT;
 
