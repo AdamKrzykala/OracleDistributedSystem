@@ -144,12 +144,13 @@ BEGIN
     index_pojazdu INT := 0;
     termin_wypozyczenia DATE := CURRENT_DATE;
     cnt INT := 0;
+    active_rental Wypozyczenia%ROWTYPE;
     BEGIN
         SELECT ID_Wypozyczalni INTO index_wypozyczalni FROM Wypozyczalnie WHERE wypozyczalnie.numerwypozyczalni = input_NumerWypozyczalni;
         SELECT ID_Klienta INTO index_klienta FROM Klienci WHERE klienci.pesel = input_PeselKlienta;
         SELECT ID_Pojazdu INTO index_pojazdu FROM Pojazdy WHERE pojazdy.numerrejestracyjny = input_NumerRejPojazdu;
         
-        SELECT COUNT(*) INTO cnt from SHOW_ALL_ACTIVE_RENTALS WHERE id_pojazdu = ID_Pojazdu;
+        SELECT COUNT(*) INTO cnt FROM SHOW_ALL_ACTIVE_RENTALS WHERE id_pojazdu = index_pojazdu;
         IF(cnt = 0) THEN
             INSERT INTO Wypozyczenia(id_wypozyczalni, id_klienta, id_pojazdu, id_zwrotu, terminwypozyczenia, planowanyterminzwrotu, pobranakaucja)
             VALUES(index_wypozyczalni, index_klienta, index_pojazdu, NULL, termin_wypozyczenia, input_PlanowanyTerminZwrotu, input_PobranaKaucja);
@@ -157,5 +158,40 @@ BEGIN
     END;
 END;
 /
+create or replace procedure insert_new_zwrot(input_NumerWypozyczalni in wypozyczalnie.numerwypozyczalni%TYPE,
+                                             input_Zaplacono in zwroty.zaplacono%TYPE,
+                                             input_ZwrotKaucji in zwroty.zwrotkaucji%TYPE,
+                                             input_PeselKlienta in klienci.pesel%TYPE,
+                                             input_NumerRejPojazdu in pojazdy.numerrejestracyjny%TYPE) IS 
+BEGIN
+    DECLARE 
+    index_wypozyczalni INT := 0;
+    index_klienta INT := 0;
+    index_pojazdu INT := 0;
+    index_zwrotu INT := 0;
+    termin_zwrotu DATE := CURRENT_DATE;
+    kara_za_spoznienie zwroty.karazaspoznienie%TYPE := 0;
+    cnt INT := 0;
+    BEGIN
+        SELECT ID_Wypozyczalni INTO index_wypozyczalni FROM Wypozyczalnie WHERE wypozyczalnie.numerwypozyczalni = input_NumerWypozyczalni;
+        SELECT ID_Klienta INTO index_klienta FROM Klienci WHERE klienci.pesel = input_PeselKlienta;
+        SELECT ID_Pojazdu INTO index_pojazdu FROM Pojazdy WHERE pojazdy.numerrejestracyjny = input_NumerRejPojazdu;
+        
+        SELECT COUNT(*) INTO cnt from SHOW_ALL_ACTIVE_RENTALS WHERE id_pojazdu = index_pojazdu;
+        IF(cnt = 1) THEN
+            INSERT INTO Zwroty(id_wypozyczalni, terminzwrotu, zaplacono, karazaspoznienie, zwrotkaucji)
+            VALUES(index_wypozyczalni, termin_zwrotu, input_Zaplacono, kara_za_spoznienie, input_ZwrotKaucji);
+            
+            SELECT id_zwrotu INTO index_zwrotu FROM Zwroty WHERE id_wypozyczalni = index_wypozyczalni AND
+                                                                 terminzwrotu = termin_zwrotu AND
+                                                                 zaplacono = input_Zaplacono AND
+                                                                 karazaspoznienie = kara_za_spoznienie AND
+                                                                 zwrotkaucji = input_ZwrotKaucji;
+            
+            UPDATE SHOW_ALL_ACTIVE_RENTALS SET id_zwrotu = index_zwrotu WHERE id_klienta = index_klienta AND
+                                                                              id_pojazdu = index_pojazdu;
+        END IF;
+    END;
+END;
+/
 COMMIT;
-

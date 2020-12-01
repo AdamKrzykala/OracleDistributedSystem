@@ -5,6 +5,7 @@ BEGIN
   
     insert_new_wypozyczalnia(0, 2000, '53-225', 'Wroclaw', 'Fabryczna', 113, 13);
     insert_new_wypozyczalnia(1, 1000, '59-700', 'Boleslawiec', 'Sierpnia 80', 11, 4);
+    insert_new_wypozyczalnia(2, 1500, '40-000', 'Katowice', 'Komuny Paryskiej', 30, 2);
     
     insert_new_pojazd('V1234567890QW36O8', 'DW1234', TO_DATE('2003/05/03', 'yyyy/mm/dd'), 325146, TO_DATE('2021/05/03', 'yyyy/mm/dd'), '0', 0, 'BMW E30', 2000, 13, 'B', 299);
     insert_new_pojazd('A1269567890XX3702', 'DW1235', TO_DATE('2003/06/21', 'yyyy/mm/dd'), 410789, TO_DATE('2021/06/21', 'yyyy/mm/dd'), '0', 1, 'BMW E30', 2000, 13, 'B', 299);
@@ -16,6 +17,18 @@ BEGIN
                             input_numerrejpojazdu=> 'DW1234',
                             input_planowanyterminzwrotu=> TO_DATE('2020/11/03', 'yyyy/mm/dd'),
                             input_pobranakaucja=> 2000);
+                            
+    insert_new_wypozyczenie(input_numerwypozyczalni=> 0,
+                            input_peselklienta=> '12345678919',
+                            input_numerrejpojazdu=> 'DW1235',
+                            input_planowanyterminzwrotu=> TO_DATE('2020/11/03', 'yyyy/mm/dd'),
+                            input_pobranakaucja=> 3000);
+                            
+    --insert_new_zwrot(input_numerwypozyczalni=> 0,
+      --               input_zaplacono=> 'TAK',
+        --             input_zwrotkaucji=> 'TAK',
+          --           input_peselklienta=> '97070206830',
+            --         input_numerrejpojazdu=> 'DW1235');
 END;
 /
 -------------------------------------------------------------------------------

@@ -41,7 +41,7 @@ BEGIN
         Rocznik                 DATE            not null,
         Przebieg                INT             not null, 
         DataWaznosciPrzegladu   DATE            null,
-        Uszkodzony              CHAR(1)         null,
+        Uszkodzony              CHAR(3)         null,
         AktualnaWypozyczalnia   INT             null,
         CONSTRAINT pojazdy_pk PRIMARY KEY(ID_pojazdu)
     )';
@@ -106,9 +106,9 @@ BEGIN
         ID_Zwrotu           INT         not null,
         ID_Wypozyczalni     INT         not null,
         TerminZwrotu        DATE        not null,
-        Zaplacono           CHAR(3)     not null,
+        Zaplacono           VARCHAR2(3)     not null,
         KaraZaSpoznienie    FLOAT(2)    null,
-        ZwrotKaucji         CHAR(1)     not null,
+        ZwrotKaucji         VARCHAR2(3)     not null,
         PRIMARY KEY(ID_Zwrotu)
     )';
 END;
