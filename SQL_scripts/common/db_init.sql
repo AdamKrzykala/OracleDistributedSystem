@@ -1,4 +1,5 @@
 --TABLES CONFIGURATION----------------------------------------------------------
+
 --Customers table creating
 BEGIN
     BEGIN
@@ -25,15 +26,15 @@ END;
 --Vehicles table creating
 BEGIN
     BEGIN
-         EXECUTE IMMEDIATE 'DROP TABLE Pojazdy';
+         EXECUTE IMMEDIATE 'DROP TABLE pojazdy';
     EXCEPTION
          WHEN OTHERS THEN
                 IF SQLCODE != -942 THEN
                      RAISE;
                 END IF;
     END;
-    EXECUTE IMMEDIATE 'CREATE TABLE Pojazdy (
-        ID_Pojazdu              INT             generated always as identity (START with 1 INCREMENT by 1),
+    EXECUTE IMMEDIATE 'CREATE TABLE pojazdy (
+        ID_Pojazdu              INT             not null,
         ID_Modelu               INT             not null,
         NumerVIN                VARCHAR(17)     not null,
         NumerRejestracyjny      VARCHAR(9)      not null,
@@ -42,10 +43,11 @@ BEGIN
         DataWaznosciPrzegladu   DATE            null,
         Uszkodzony              CHAR(1)         null,
         AktualnaWypozyczalnia   INT             null,
-        PRIMARY KEY(ID_pojazdu)
+        CONSTRAINT pojazdy_pk PRIMARY KEY(ID_pojazdu)
     )';
 END;
 /
+
 --Models table creating
 BEGIN
     BEGIN
