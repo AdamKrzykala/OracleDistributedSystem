@@ -41,3 +41,5 @@ CREATE OR REPLACE PUBLIC SYNONYM remoteRentals FOR wypozyczenia@WYPOZYCZALNIA_AD
 
 --Creating remote database synonym to zwroty
 CREATE OR REPLACE PUBLIC SYNONYM remoteReturns FOR zwroty@WYPOZYCZALNIA_ADAM;
+
+COMMIT;
