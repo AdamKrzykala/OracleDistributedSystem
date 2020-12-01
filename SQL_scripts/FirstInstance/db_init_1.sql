@@ -1,11 +1,5 @@
 --FIRST DB INDIVIDUAL INIT----------------------------------------------------------
 
---External database link creating
-CREATE DATABASE LINK WYPOZYCZALNIA_MICHAL 
-    CONNECT TO c##mnowak 
-    IDENTIFIED BY mnowak5 
-    USING 'ORCLMICHAL';
-
 --Vehilce id sequence creating 
 BEGIN
     BEGIN

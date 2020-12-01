@@ -1,3 +1,15 @@
+--External database link creating
+CREATE DATABASE LINK WYPOZYCZALNIA_ADAM 
+    CONNECT TO c##adam 
+    IDENTIFIED BY adam 
+    USING 'ORCLADAM';
+
+--External database link creating
+CREATE DATABASE LINK WYPOZYCZALNIA_MICHAL 
+    CONNECT TO c##mnowak 
+    IDENTIFIED BY mnowak5 
+    USING 'ORCLMICHAL';
+    
 --TABLES CONFIGURATION----------------------------------------------------------
 
 --Customers table creating

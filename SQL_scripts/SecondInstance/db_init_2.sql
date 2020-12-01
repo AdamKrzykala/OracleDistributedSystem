@@ -1,11 +1,5 @@
 --SECOND DB INDIVIDUAL INIT----------------------------------------------------------
 
---External database link creating
-CREATE DATABASE LINK WYPOZYCZALNIA_ADAM 
-    CONNECT TO c##adam 
-    IDENTIFIED BY adam 
-    USING 'ORCLADAM';
-    
 --Vehicle id insertion trigger creating
 CREATE OR REPLACE TRIGGER pojazdy_on_insert
   BEFORE INSERT ON pojazdy

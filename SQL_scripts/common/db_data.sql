@@ -24,11 +24,11 @@ BEGIN
                             input_planowanyterminzwrotu=> TO_DATE('2020/11/03', 'yyyy/mm/dd'),
                             input_pobranakaucja=> 3000);
                             
-    --insert_new_zwrot(input_numerwypozyczalni=> 0,
-      --               input_zaplacono=> 'TAK',
-        --             input_zwrotkaucji=> 'TAK',
-          --           input_peselklienta=> '97070206830',
-            --         input_numerrejpojazdu=> 'DW1235');
+    insert_new_zwrot(input_numerwypozyczalni=> 0,
+                     input_zaplacono=> 'TAK',
+                     input_zwrotkaucji=> 'TAK',
+                     input_peselklienta=> '97070206830',
+                     input_numerrejpojazdu=> 'DW1234');
 END;
 /
 -------------------------------------------------------------------------------
