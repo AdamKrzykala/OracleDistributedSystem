@@ -80,7 +80,7 @@ BEGIN
             END IF;
     END;
     EXECUTE IMMEDIATE 'CREATE TABLE Wypozyczenia (
-        ID_Wypozyczenia         INT         generated always as identity (START with 1 INCREMENT by 1),
+        ID_Wypozyczenia         INT         not null,
         ID_Wypozyczalni         INT         not null,
         ID_Klienta              INT         not null,
         ID_Pojazdu              INT         not null,

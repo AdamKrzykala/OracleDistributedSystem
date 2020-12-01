@@ -18,4 +18,10 @@ SELECT * FROM remoteVehicles WHERE remoteVehicles.AktualnaWypozyczalnia = 1
 UNION ALL
 SELECT * FROM pojazdy WHERE pojazdy.AktualnaWypozyczalnia = 1;
 
+--Creating partitioned view of all global rentals
+CREATE OR REPLACE VIEW SHOW_ALL_RENTALS AS
+SELECT * FROM remoteRentals
+UNION ALL
+SELECT * FROM wypozyczenia
+
 COMMIT;

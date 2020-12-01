@@ -17,5 +17,19 @@ BEGIN
 END;
 /
 
+--Rentals id insertion trigger creating
+CREATE OR REPLACE TRIGGER wypozyczenia_on_insert
+  BEFORE INSERT ON wypozyczenia
+  FOR EACH ROW
+BEGIN
+  SELECT RENTALS_ID_SEQUENCE.nextval@WYPOZYCZALNIA_ADAM --This sequence must be replicated
+  INTO :new.ID_Pojazdu
+  FROM dual;
+END;
+/
+
 --Creating remote database synonym to pojazdy
 CREATE OR REPLACE PUBLIC SYNONYM remoteVehicles FOR pojazdy@WYPOZYCZALNIA_ADAM;
+
+--Creating remote database synonym to wypozyczenia
+CREATE OR REPLACE PUBLIC SYNONYM remoteRentals FOR wypozyczenia@WYPOZYCZALNIA_ADAM;
