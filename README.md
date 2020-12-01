@@ -10,12 +10,12 @@ FOR EACH INSTANCE CALL SECONDLY:
 DISTRIBUTED MECHANISMS:
 
 DONE:
-	partitioned vehicles
-
-TO DO:
+	partitioned vehicles,
 	partitioned rentals
-	partitioned returns 
-	replicated master-master sequences and triggers 
-	replicated multimaster clients
-	replicated multimaster addresses
+
+TO DO:	
+	partitioned returns, 
+	replicated master-master sequences and triggers, 
+	replicated multimaster clients,
+	replicated multimaster addresses,
 	replicated multimaster 
