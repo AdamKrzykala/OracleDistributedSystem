@@ -10,6 +10,13 @@ BEGIN
     insert_new_pojazd('A1269567890XX3702', 'DW1235', TO_DATE('2003/06/21', 'yyyy/mm/dd'), 410789, TO_DATE('2021/06/21', 'yyyy/mm/dd'), '0', 1, 'BMW E30', 2000, 13, 'B', 299);
     insert_new_pojazd('B1269567890AA3702', 'DW1695', TO_DATE('2006/03/17', 'yyyy/mm/dd'), 210789, TO_DATE('2021/02/21', 'yyyy/mm/dd'), '0', 0, 'Audi A4', 2000, 10, 'B', 199);
     insert_new_pojazd('C1269567890ZZ3702', 'DW1237', TO_DATE('2009/02/02', 'yyyy/mm/dd'), 230128, TO_DATE('2021/07/21', 'yyyy/mm/dd'), '0', 1, 'Audi A6', 2000, 12, 'B', 399);
+    
+    insert_new_wypozyczenie(input_numerwypozyczalni=> 0,
+                            input_peselklienta=> '97070206830',
+                            input_numerrejpojazdu=> 'DW1234',
+                            input_planowanyterminzwrotu=> TO_DATE('2020/11/03', 'yyyy/mm/dd'),
+                            input_pobranakaucja=> 2000);
 END;
+/
 -------------------------------------------------------------------------------
 COMMIT;
