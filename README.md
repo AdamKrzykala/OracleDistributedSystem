@@ -18,4 +18,5 @@ TO DO:
 	replicated master-master sequences and triggers, 
 	replicated multimaster clients,
 	replicated multimaster addresses,
-	replicated multimaster 
+	replicated multimaster,
+	locally partitioned clients 
