@@ -88,7 +88,7 @@ BEGIN
         TerminWypozyczenia      DATE        not null,
         PlanowanyTerminZwrotu   DATE        not null,
         PobranaKaucja           FLOAT       not null,
-        PRIMARY KEY(ID_Wypozyczenia)
+        CONSTRAINT wypozyczenia_pk PRIMARY KEY(ID_Wypozyczenia)
     )';
 END;
 /
@@ -103,7 +103,7 @@ BEGIN
             END IF;
     END;
     EXECUTE IMMEDIATE 'CREATE TABLE Zwroty (
-        ID_Zwrotu           INT         generated always as identity (START with 1 INCREMENT by 1),
+        ID_Zwrotu           INT         not null,
         ID_Wypozyczalni     INT         not null,
         TerminZwrotu        DATE        not null,
         Zaplacono           CHAR(1)     not null,

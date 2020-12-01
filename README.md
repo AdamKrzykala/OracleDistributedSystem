@@ -11,10 +11,10 @@ DISTRIBUTED MECHANISMS:
 
 DONE:
 	partitioned vehicles,
-	partitioned rentals
+	partitioned rentals,
+	partitioned returns
 
 TO DO:	
-	partitioned returns, 
 	replicated master-master sequences and triggers, 
 	replicated multimaster clients,
 	replicated multimaster addresses,
