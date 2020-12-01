@@ -106,7 +106,7 @@ BEGIN
         ID_Zwrotu           INT         not null,
         ID_Wypozyczalni     INT         not null,
         TerminZwrotu        DATE        not null,
-        Zaplacono           CHAR(1)     not null,
+        Zaplacono           CHAR(3)     not null,
         KaraZaSpoznienie    FLOAT(2)    null,
         ZwrotKaucji         CHAR(1)     not null,
         PRIMARY KEY(ID_Zwrotu)

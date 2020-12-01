@@ -134,7 +134,7 @@ END;
 /
 create or replace procedure insert_new_wypozyczenie(input_NumerWypozyczalni in wypozyczalnie.numerwypozyczalni%TYPE,
                                                     input_PeselKlienta in klienci.pesel%TYPE,
-                                                    input_TerminWypozyczenia in wypozyczenia.terminwypozyczenia%TYPE,
+                                                    input_NumerRejPojazdu in pojazdy.numerrejestracyjny%TYPE,
                                                     input_PlanowanyTerminZwrotu in wypozyczenia.planowanyterminzwrotu%TYPE,
                                                     input_PobranaKaucja in wypozyczenia.pobranakaucja%TYPE) IS 
 BEGIN
@@ -142,11 +142,14 @@ BEGIN
     index_wypozyczalni INT := 0;
     index_klienta INT := 0;
     index_pojazdu INT := 0;
+    termin_wypozyczenia DATE := CURRENT_DATE;
     BEGIN
         SELECT ID_Wypozyczalni INTO index_wypozyczalni FROM Wypozyczalnie WHERE wypozyczalnie.numerwypozyczalni = input_NumerWypozyczalni;
-        --SELECT ID_Klienta INTO index_klienta FROM Klienci WHERE 
-            --INSERT INTO Wypozyczalnie(id_adresu, wolnemiejsca)
-            --VALUES(index_value, input_IloscMiejsc);
+        SELECT ID_Klienta INTO index_klienta FROM Klienci WHERE klienci.pesel = input_PeselKlienta;
+        SELECT ID_Pojazdu INTO index_pojazdu FROM Pojazdy WHERE pojazdy.numerrejestracyjny = input_NumerRejPojazdu;
+        
+        INSERT INTO Wypozyczenia(id_wypozyczalni, id_klienta, id_pojazdu, id_zwrotu, terminwypozyczenia, planowanyterminzwrotu, pobranakaucja)
+        VALUES(index_wypozyczalni, index_klienta, index_pojazdu, NULL, termin_wypozyczenia, input_PlanowanyTerminZwrotu, input_PobranaKaucja);
     END;
 END;
 /
