@@ -3,8 +3,8 @@ FOR EACH INSTANCE CALL FIRSTLY:
 	2. Individual db_init.sql
 	
 FOR EACH INSTANCE CALL SECONDLY:
-	1. Common db_procedures&functions.sql
-	2. Common db_views.sql
+	1. Common db_views.sql
+	2. Common db_procedures&functions.sql
 	3. Common db_data.sql
 
 DISTRIBUTED MECHANISMS:
@@ -15,8 +15,8 @@ DONE:
 	partitioned returns
 
 TO DO:	
-	replicated master-master sequences and triggers, 
+	replicated snapshots models, 
+	replicated snapshots rentalHouses,
 	replicated multimaster clients,
 	replicated multimaster addresses,
-	replicated multimaster,
 	locally partitioned clients 
