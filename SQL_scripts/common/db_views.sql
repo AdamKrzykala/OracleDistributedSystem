@@ -22,6 +22,12 @@ SELECT * FROM pojazdy WHERE pojazdy.AktualnaWypozyczalnia = 1;
 CREATE OR REPLACE VIEW SHOW_ALL_RENTALS AS
 SELECT * FROM remoteRentals
 UNION ALL
-SELECT * FROM wypozyczenia
+SELECT * FROM wypozyczenia;
+
+--Creating partitioned view of all global rentals
+CREATE OR REPLACE VIEW SHOW_ALL_RETURNS AS
+SELECT * FROM remoteReturns
+UNION ALL
+SELECT * FROM zwroty;
 
 COMMIT;
