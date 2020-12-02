@@ -60,27 +60,6 @@ BEGIN
 END;
 /
 
---Models table creating
-BEGIN
-    BEGIN
-         EXECUTE IMMEDIATE 'DROP TABLE Modele';
-    EXCEPTION
-         WHEN OTHERS THEN
-            IF SQLCODE != -942 THEN
-                 RAISE;
-            END IF;
-    END;
-    EXECUTE IMMEDIATE 'CREATE TABLE Modele (
-        ID_Modelu               INT             generated always as identity (START with  1 INCREMENT by 1),
-        Model                   VARCHAR(30)     not null,
-        PojemnoscSilnika        INT             not null,
-        SrednieSpalanie         INT             null,
-        KategoriaPrawaJazdy     CHAR(1)         not null,
-        StawkaZaDzien           FLOAT           not null,
-        PRIMARY KEY(ID_Modelu)
-    )';
-END;
-/
 --Rentals table creating
 BEGIN
     BEGIN
@@ -125,25 +104,7 @@ BEGIN
     )';
 END;
 /
---RentalHouses table creating
-BEGIN
-    BEGIN
-        EXECUTE IMMEDIATE 'DROP TABLE Wypozyczalnie';
-    EXCEPTION
-         WHEN OTHERS THEN
-            IF SQLCODE != -942 THEN
-                 RAISE;
-            END IF;
-    END;
-    EXECUTE IMMEDIATE 'CREATE TABLE Wypozyczalnie (
-        ID_Wypozyczalni     INT       generated always as identity (START with 1 INCREMENT by 1),
-        ID_Adresu           INT       not null,
-        NumerWypozyczalni   INT       not null,
-        WolneMiejsca        INT       not null,
-        PRIMARY KEY(ID_Wypozyczalni)
-    )';
-END;
-/
+
 --Address table creating
 BEGIN
     BEGIN
@@ -168,13 +129,9 @@ END;
 --FOREIGN KEYS CONFIGURATION----------------------------------------------------
 BEGIN
     EXECUTE IMMEDIATE 'ALTER TABLE Klienci ADD CONSTRAINT fk_KlientAdres FOREIGN KEY (ID_Adresu) REFERENCES Adresy(ID_Adresu)';
-    EXECUTE IMMEDIATE 'ALTER TABLE Pojazdy ADD CONSTRAINT fk_PojazdModel FOREIGN KEY (ID_Modelu) REFERENCES Modele(ID_Modelu)';
-    EXECUTE IMMEDIATE 'ALTER TABLE Wypozyczenia ADD CONSTRAINT fk_WypozyczenieWypozyczalnia FOREIGN KEY (ID_Wypozyczalni) REFERENCES Wypozyczalnie(ID_Wypozyczalni)';
     EXECUTE IMMEDIATE 'ALTER TABLE Wypozyczenia ADD CONSTRAINT fk_WypozyczenieKlient FOREIGN KEY (ID_Klienta) REFERENCES Klienci(ID_Klienta)';
     EXECUTE IMMEDIATE 'ALTER TABLE Wypozyczenia ADD CONSTRAINT fk_WypozyczeniePojazd FOREIGN KEY (ID_Pojazdu) REFERENCES Pojazdy(ID_Pojazdu)';
     EXECUTE IMMEDIATE 'ALTER TABLE Wypozyczenia ADD CONSTRAINT fk_WypozyczenieZwrot FOREIGN KEY (ID_Zwrotu) REFERENCES Zwroty(ID_Zwrotu)';
-    EXECUTE IMMEDIATE 'ALTER TABLE Zwroty ADD CONSTRAINT fk_ZwrotWypozyczalnia FOREIGN KEY (ID_Wypozyczalni) REFERENCES Wypozyczalnie(ID_Wypozyczalni)';
-    EXECUTE IMMEDIATE 'ALTER TABLE Wypozyczalnie ADD CONSTRAINT fk_WypozyczalniaAdres FOREIGN KEY (ID_Adresu) REFERENCES Adresy(ID_Adresu)';
 END;
 /
 --INDEXES CONFIGURATION---------------------------------------------------------
@@ -188,9 +145,6 @@ CREATE INDEX idx_Pojazd_ID_Modelu              ON Pojazdy(ID_Modelu);
 CREATE INDEX idx_Pojazd_NumerVIN               ON Pojazdy(NumerVIN);
 CREATE INDEX idx_Pojazd_NumerRejestracyjny     ON Pojazdy(NumerRejestracyjny);
 
---Indexes to models table creating
-CREATE INDEX idx_Model_Model_idx    ON Modele(Model);
-
 --Indexes to rentals table creating 
 CREATE INDEX idx_Wypozyczenie_ID_Wypozyczalni   ON Wypozyczenia(ID_Wypozyczalni);
 CREATE INDEX idx_Wypozyczenie_ID_Klienta        ON Wypozyczenia(ID_Klienta);
@@ -199,10 +153,6 @@ CREATE INDEX idx_Wypozyczenie_ID_Zwrotu         ON Wypozyczenia(ID_Zwrotu);
 
 --Creating indexes to returns table
 CREATE INDEX idx_Zwrot_ID_Wypozyczalni      ON Zwroty(ID_Wypozyczalni);
-
---Creating indexes to rentalHouses table
-CREATE INDEX idx_Wypozyczalnia_ID_Adresu             ON Wypozyczalnie(ID_Adresu);
-CREATE INDEX idx_Wypozyczalnia_ID_NumerWypozyczalni  ON Wypozyczalnie(NumerWypozyczalni);
 
 --Creating indexes to addresses table
 CREATE INDEX idx_Adres_KodPocztowy      ON Adresy(KodPocztowy);
