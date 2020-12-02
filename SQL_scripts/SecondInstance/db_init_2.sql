@@ -33,6 +33,39 @@ BEGIN
 END;
 /
 
+--Creating remote database synonym to rentalHouses on server
+CREATE OR REPLACE PUBLIC SYNONYM serverWypozyczalnie FOR wypozyczalnie@WYPOZYCZALNIA_ADAM;
+
+--Snapshot of rentalHouses for slave
+CREATE SNAPSHOT WypozyczalnieServer
+BUILD IMMEDIATE 
+REFRESH FAST AS
+SELECT * FROM serverWypozyczalnie;
+
+--Creating remote database synonym to models on server
+CREATE OR REPLACE PUBLIC SYNONYM serverModels FOR modele@WYPOZYCZALNIA_ADAM;
+
+--Snapshot of models for slave
+CREATE SNAPSHOT ModeleServer
+BUILD IMMEDIATE 
+REFRESH FAST AS
+SELECT * FROM serverModels;
+
+--Creating remote refresh group synonym to rentalHousesRefreshGroup
+CREATE OR REPLACE PUBLIC SYNONYM remoteRentalHousesRefreshGroup 
+    FOR rentalHousesRefreshGroup@WYPOZYCZALNIA_ADAM;
+
+--Creating remote refresh group synonym to modelsRefreshGroup
+CREATE OR REPLACE PUBLIC SYNONYM remoteModelsRefreshGroup
+    FOR modelsRefreshGroup@WYPOZYCZALNIA_ADAM;
+
+--Adding snapshots to refresh group on server
+DBMS_REFRESH.ADD(name=>'rentalHousesRefreshGroup@WYPOZYCZALNIA_ADAM', 
+                    list=>'WypozyczalnieServer');
+                    
+DBMS_REFRESH.ADD(name=>'modelsRefreshGroup@WYPOZYCZALNIA_ADAM', 
+                    list=>'ModeleServer');
+
 --Creating remote database synonym to pojazdy
 CREATE OR REPLACE PUBLIC SYNONYM remoteVehicles FOR pojazdy@WYPOZYCZALNIA_ADAM;
 
