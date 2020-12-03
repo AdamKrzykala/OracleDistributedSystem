@@ -216,6 +216,20 @@ BEGIN
     END;
 END;
 /
+create or replace procedure update_wypozyczalnia(input_ID_Wypozyczalni in wypozyczalnie.id_wypozyczalni%TYPE,
+                                                 input_NumerWypozyczalni in wypozyczalnie.numerwypozyczalni%TYPE,
+                                                 input_IloscMiejsc in wypozyczalnie.wolnemiejsca%TYPE) IS 
+BEGIN
+    UPDATE Wypozyczalnie SET wypozyczalnie.numerwypozyczalni = input_NumerWypozyczalni,
+                             wypozyczalnie.wolnemiejsca = input_IloscMiejsc
+    WHERE input_ID_Wypozyczalni = wypozyczalnie.id_wypozyczalni;
+END;
+/
+create or replace procedure delete_wypozyczalnia(input_ID_Wypozyczalni in wypozyczalnie.id_wypozyczalni%TYPE) IS 
+BEGIN
+    DELETE FROM Wypozyczalnie WHERE input_ID_Wypozyczalni = wypozyczalnie.id_wypozyczalni;
+END;
+/
 create or replace procedure insert_new_wypozyczenie(input_NumerWypozyczalni in wypozyczalnie.numerwypozyczalni%TYPE,
                                                     input_PeselKlienta in klienci.pesel%TYPE,
                                                     input_NumerRejPojazdu in pojazdy.numerrejestracyjny%TYPE,
