@@ -164,6 +164,28 @@ BEGIN
     END;
 END;
 /
+create or replace procedure update_pojazd(input_ID_Pojazdu in pojazdy.id_pojazdu%TYPE,
+                                          input_NumerVIN in pojazdy.numervin%TYPE,
+                                          input_NumerRej in pojazdy.numerrejestracyjny%TYPE,
+                                          input_Rocznik in pojazdy.rocznik%TYPE,
+                                          input_Przebieg in pojazdy.przebieg%TYPE,
+                                          input_DataPrzegladu in pojazdy.datawaznosciprzegladu%TYPE,
+                                          input_Uszkodzony in pojazdy.uszkodzony%TYPE) IS 
+BEGIN
+    UPDATE Pojazdy SET pojazdy.numervin = input_NumerVIN,
+                       pojazdy.numerrejestracyjny = input_NumerRej,
+                       pojazdy.rocznik = input_Rocznik,
+                       pojazdy.przebieg = input_Przebieg,
+                       pojazdy.datawaznosciprzegladu = input_DataPrzegladu,
+                       pojazdy.uszkodzony = input_Uszkodzony
+    WHERE input_ID_Pojazdu = pojazdy.id_pojazdu;
+END;
+/
+create or replace procedure delete_pojazd(input_ID_Pojazdu in pojazdy.id_pojazdu%TYPE) IS 
+BEGIN
+    DELETE FROM Pojazdy WHERE input_ID_Pojazdu = pojazdy.id_pojazdu;
+END;
+/
 create or replace procedure insert_new_wypozyczalnia(input_NumerWypozyczalni in wypozyczalnie.numerwypozyczalni%TYPE,
                                                      input_IloscMiejsc in wypozyczalnie.wolnemiejsca%TYPE,
                                                      input_KodPocztowy in adresy.kodpocztowy%TYPE,
