@@ -33,38 +33,69 @@ BEGIN
 END;
 /
 
+--Creating remote database synonym to models on server
+CREATE OR REPLACE PUBLIC SYNONYM modeleServer FOR modele@WYPOZYCZALNIA_ADAM;
+
 --Creating remote database synonym to rentalHouses on server
-CREATE OR REPLACE PUBLIC SYNONYM serverWypozyczalnie FOR wypozyczalnie@WYPOZYCZALNIA_ADAM;
+CREATE OR REPLACE PUBLIC SYNONYM wypozyczalnieServer FOR wypozyczalnie@WYPOZYCZALNIA_ADAM;
+
 
 --Snapshot of rentalHouses for slave
-CREATE SNAPSHOT WypozyczalnieServer
-BUILD IMMEDIATE 
-REFRESH FAST AS
-SELECT * FROM serverWypozyczalnie;
-
---Creating remote database synonym to models on server
-CREATE OR REPLACE PUBLIC SYNONYM serverModels FOR modele@WYPOZYCZALNIA_ADAM;
+--Creating snapshot log for models
+BEGIN
+    BEGIN
+         EXECUTE IMMEDIATE 'DROP SNAPSHOT WypozyczalnieMV';
+    EXCEPTION
+         WHEN OTHERS THEN
+            IF SQLCODE != -12003 THEN
+                 RAISE;
+            END IF;
+    END;
+    EXECUTE IMMEDIATE 'CREATE SNAPSHOT WypozyczalnieMV
+        BUILD IMMEDIATE 
+        REFRESH FAST 
+        NEXT sysdate + 1
+        AS
+        SELECT * FROM wypozyczalnieServer';
+END;
+/
 
 --Snapshot of models for slave
-CREATE SNAPSHOT ModeleServer
-BUILD IMMEDIATE 
-REFRESH FAST AS
-SELECT * FROM serverModels;
+BEGIN
+    BEGIN
+         EXECUTE IMMEDIATE 'DROP SNAPSHOT ModeleMV';
+    EXCEPTION
+         WHEN OTHERS THEN
+            IF SQLCODE != -12003 THEN
+                 RAISE;
+            END IF;
+    END;
+    EXECUTE IMMEDIATE 'CREATE SNAPSHOT ModeleMV
+        BUILD IMMEDIATE 
+        REFRESH FAST ON DEMAND
+        START WITH sysdate
+        NEXT sysdate + (1/(24*60*5))
+        ENABLE QUERY REWRITE
+        AS
+        SELECT * FROM modeleServer
+        ';
+END;
+/
 
---Creating remote refresh group synonym to rentalHousesRefreshGroup
-CREATE OR REPLACE PUBLIC SYNONYM remoteRentalHousesRefreshGroup 
-    FOR rentalHousesRefreshGroup@WYPOZYCZALNIA_ADAM;
+----Creating remote refresh group synonym to rentalHousesRefreshGroup
+--CREATE OR REPLACE PUBLIC SYNONYM remoteRentalHousesRefreshGroup 
+--    FOR rentalHousesRefreshGroup@WYPOZYCZALNIA_ADAM;
+--
+----Creating remote refresh group synonym to modelsRefreshGroup
+--CREATE OR REPLACE PUBLIC SYNONYM remoteModelsRefreshGroup
+--    FOR modelsRefreshGroup@WYPOZYCZALNIA_ADAM;
 
---Creating remote refresh group synonym to modelsRefreshGroup
-CREATE OR REPLACE PUBLIC SYNONYM remoteModelsRefreshGroup
-    FOR modelsRefreshGroup@WYPOZYCZALNIA_ADAM;
-
---Adding snapshots to refresh group on server
-DBMS_REFRESH.ADD(name=>'rentalHousesRefreshGroup@WYPOZYCZALNIA_ADAM', 
-                    list=>'WypozyczalnieServer');
-                    
-DBMS_REFRESH.ADD(name=>'modelsRefreshGroup@WYPOZYCZALNIA_ADAM', 
-                    list=>'ModeleServer');
+----Adding snapshots to refresh group on server
+--DBMS_REFRESH.ADD(name=>'rentalHousesRefreshGroup@WYPOZYCZALNIA_ADAM', 
+--                    list=>'WypozyczalnieServer');
+--                    
+--DBMS_REFRESH.ADD(name=>'modelsRefreshGroup@WYPOZYCZALNIA_ADAM', 
+--                    list=>'ModeleServer');
 
 --Creating remote database synonym to pojazdy
 CREATE OR REPLACE PUBLIC SYNONYM remoteVehicles FOR pojazdy@WYPOZYCZALNIA_ADAM;

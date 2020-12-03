@@ -1,4 +1,3 @@
---External database link creating
 CREATE DATABASE LINK WYPOZYCZALNIA_ADAM 
     CONNECT TO c##adam 
     IDENTIFIED BY adam 

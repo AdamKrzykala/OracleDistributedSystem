@@ -156,8 +156,14 @@ CREATE OR REPLACE PUBLIC SYNONYM remoteVehicles FOR pojazdy@WYPOZYCZALNIA_MICHAL
 --Creating remote database synonym to wypozyczenia
 CREATE OR REPLACE PUBLIC SYNONYM remoteRentals FOR wypozyczenia@WYPOZYCZALNIA_MICHAL;
 
---Creating remote database synonym to wypozyczenia
+--Creating remote database synonym to zwroty
 CREATE OR REPLACE PUBLIC SYNONYM remoteReturns FOR zwroty@WYPOZYCZALNIA_MICHAL;
+
+--Creating remote database synonym to models on server
+CREATE OR REPLACE PUBLIC SYNONYM ModeleServer FOR modele@WYPOZYCZALNIA_ADAM;
+
+--Creating remote database synonym to rentalHouses on server
+CREATE OR REPLACE PUBLIC SYNONYM WypozyczalnieServer FOR wypozyczalnie@WYPOZYCZALNIA_ADAM;
 
 --Creating snapshot log for rentalHouses
 BEGIN
@@ -201,24 +207,24 @@ BEGIN
 END;
 /
 
---Creating refreshing group for rentalHouses snapshot
---Refreshing each one day or after inserting
-BEGIN
-    DBMS_REFRESH.make(name=>'rentalHousesRefreshGroup',
-                                list=>'',
-                                next_date=>sysdate + (1/(24*60*60)),
-                                interval=>'sysdate + 1',
-                                implicit_destroy=>FALSE);
-END;
-/
---Creating refreshing group for models snapshot
---Refreshing each 6 seconds
-BEGIN
-    DBMS_REFRESH.make(name=>'modelsRefreshGroup',
-                                list=>'',
-                                next_date=>sysdate + (1/(24*60*60)),
-                                interval=>'sysdate + (1/(24*60*10))',
-                                implicit_destroy=>FALSE);
-END;
+----Creating refreshing group for rentalHouses snapshot
+----Refreshing each one day or after inserting
+--BEGIN
+--    DBMS_REFRESH.make(name=>'rentalHousesRefreshGroup',
+--                                list=>'',
+--                                next_date=>sysdate + (1/(24*60*60)),
+--                                interval=>'sysdate + 1',
+--                                implicit_destroy=>FALSE);
+--    END;
+--/
+----Creating refreshing group for models snapshot
+----Refreshing each 6 seconds
+--BEGIN
+--    DBMS_REFRESH.make(name=>'modelsRefreshGroup',
+--                                list=>'',
+--                                next_date=>sysdate + (1/(24*60*60)),
+--                                interval=>'sysdate + (1/(24*60*10))',
+--                                implicit_destroy=>FALSE);
+--END;
 
 COMMIT;

@@ -49,22 +49,22 @@ BEGIN
     END;
 END;
 /
-create or replace procedure insert_new_model(input_Model in modele.model%TYPE,
-                                             input_Pojemnosc in modele.pojemnoscsilnika%TYPE,
-                                             input_Spalanie in modele.sredniespalanie%TYPE,
-                                             input_KatPrawaJazdy in modele.kategoriaprawajazdy%TYPE,
-                                             input_Stawka in modele.stawkazadzien%TYPE) IS 
+create or replace procedure insert_new_model(input_Model in modeleServer.model%TYPE,
+                                             input_Pojemnosc in modeleServer.pojemnoscsilnika%TYPE,
+                                             input_Spalanie in modeleServer.sredniespalanie%TYPE,
+                                             input_KatPrawaJazdy in modeleServer.kategoriaprawajazdy%TYPE,
+                                             input_Stawka in modeleServer.stawkazadzien%TYPE) IS 
 BEGIN
     DECLARE 
     cnt INT := 0;
     BEGIN
-        SELECT COUNT(*) INTO cnt FROM Modele WHERE input_Model in modele.model AND
-                                                   input_Pojemnosc in modele.pojemnoscsilnika AND
-                                                   input_Spalanie in modele.sredniespalanie AND
-                                                   input_KatPrawaJazdy in modele.kategoriaprawajazdy AND
-                                                   input_Stawka in modele.stawkazadzien;
+        SELECT COUNT(*) INTO cnt FROM modeleServer WHERE input_Model in modeleServer.model AND
+                                                   input_Pojemnosc in modeleServer.pojemnoscsilnika AND
+                                                   input_Spalanie in modeleServer.sredniespalanie AND
+                                                   input_KatPrawaJazdy in modeleServer.kategoriaprawajazdy AND
+                                                   input_Stawka in modeleServer.stawkazadzien;
         IF(cnt = 0) THEN
-            INSERT INTO Modele(model, pojemnoscsilnika, sredniespalanie, kategoriaprawajazdy, stawkazadzien)
+            INSERT INTO ModeleServer(model, pojemnoscsilnika, sredniespalanie, kategoriaprawajazdy, stawkazadzien)
             VALUES(input_Model, input_Pojemnosc, input_Spalanie, input_KatPrawaJazdy, input_Stawka);
         END IF;
     END;
@@ -77,11 +77,11 @@ create or replace procedure insert_new_pojazd(input_NumerVIN in pojazdy.numervin
                                               input_DataPrzegladu in pojazdy.datawaznosciprzegladu%TYPE,
                                               input_Uszkodzony in pojazdy.uszkodzony%TYPE,
                                               input_AktualnaWypozyczalnia in pojazdy.aktualnawypozyczalnia%TYPE,
-                                              input_Model in modele.model%TYPE,
-                                              input_Pojemnosc in modele.pojemnoscsilnika%TYPE,
-                                              input_Spalanie in modele.sredniespalanie%TYPE,
-                                              input_KatPrawaJazdy in modele.kategoriaprawajazdy%TYPE,
-                                              input_Stawka in modele.stawkazadzien%TYPE) IS 
+                                              input_Model in modeleServer.model%TYPE,
+                                              input_Pojemnosc in modeleServer.pojemnoscsilnika%TYPE,
+                                              input_Spalanie in modeleServer.sredniespalanie%TYPE,
+                                              input_KatPrawaJazdy in modeleServer.kategoriaprawajazdy%TYPE,
+                                              input_Stawka in modeleServer.stawkazadzien%TYPE) IS 
 BEGIN
     DECLARE 
     index_value INT := 0;
@@ -90,11 +90,11 @@ BEGIN
         SELECT COUNT(*) INTO cnt FROM Pojazdy WHERE input_NumerVIN in pojazdy.numervin;
         IF(cnt = 0) THEN
             insert_new_model(input_Model, input_Pojemnosc, input_Spalanie, input_KatPrawaJazdy, input_Stawka);
-            SELECT ID_Modelu INTO index_value FROM Modele WHERE input_Model in modele.model AND
-                                                                input_Pojemnosc in modele.pojemnoscsilnika AND
-                                                                input_Spalanie in modele.sredniespalanie AND
-                                                                input_KatPrawaJazdy in modele.kategoriaprawajazdy AND
-                                                                input_Stawka in modele.stawkazadzien;
+            SELECT ID_Modelu INTO index_value FROM ModeleServer WHERE input_Model in modeleServer.model AND
+                                                                input_Pojemnosc in modeleServer.pojemnoscsilnika AND
+                                                                input_Spalanie in modeleServer.sredniespalanie AND
+                                                                input_KatPrawaJazdy in modeleServer.kategoriaprawajazdy AND
+                                                                input_Stawka in modeleServer.stawkazadzien;
 
             INSERT INTO Pojazdy(id_modelu, numervin, numerrejestracyjny, rocznik, przebieg, datawaznosciprzegladu, uszkodzony, aktualnawypozyczalnia)
             VALUES(index_value, input_NumerVIN, input_NumerRej, input_Rocznik, input_Przebieg, input_DataPrzegladu, input_Uszkodzony, input_AktualnaWypozyczalnia);
@@ -126,7 +126,7 @@ BEGIN
                                                                 adresy.ulica = input_Ulica AND
                                                                 adresy.numerdomu = input_NumerDomu AND
                                                                 adresy.numermieszkania = input_NumerMieszkania;
-            INSERT INTO Wypozyczalnie(id_adresu, wolnemiejsca, numerwypozyczalni)
+            INSERT INTO Wypozyczalnie@WYPOZYCZALNIA_ADAM(id_adresu, wolnemiejsca, numerwypozyczalni)
             VALUES(index_value, input_IloscMiejsc, input_NumerWypozyczalni);
         END IF;
     END;
