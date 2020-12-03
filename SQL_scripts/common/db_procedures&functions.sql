@@ -86,6 +86,11 @@ BEGIN
     WHERE input_ID_Klienta = klienci.id_klienta;
 END;
 /
+create or replace procedure delete_klient(input_ID_Klienta in klienci.id_klienta%TYPE) IS 
+BEGIN
+    DELETE FROM Klienci WHERE input_ID_Klienta = klienci.id_klienta;
+END;
+/
 create or replace procedure insert_new_model(input_Model in modeleServer.model%TYPE,
                                              input_Pojemnosc in modeleServer.pojemnoscsilnika%TYPE,
                                              input_Spalanie in modeleServer.sredniespalanie%TYPE,
@@ -105,6 +110,26 @@ BEGIN
             VALUES(input_Model, input_Pojemnosc, input_Spalanie, input_KatPrawaJazdy, input_Stawka);
         END IF;
     END;
+END;
+/
+create or replace procedure update_model(input_ID_Modelu in modeleServer.id_modelu%TYPE,
+                                         input_Model in modeleServer.model%TYPE,
+                                         input_Pojemnosc in modeleServer.pojemnoscsilnika%TYPE,
+                                         input_Spalanie in modeleServer.sredniespalanie%TYPE,
+                                         input_KatPrawaJazdy in modeleServer.kategoriaprawajazdy%TYPE,
+                                         input_Stawka in modeleServer.stawkazadzien%TYPE) IS 
+BEGIN
+    UPDATE ModeleServer SET modeleServer.model = modeleServer.model,
+                            modeleServer.pojemnoscsilnika = modeleServer.pojemnoscsilnika,
+                            modeleServer.sredniespalanie = modeleServer.sredniespalanie,
+                            modeleServer.kategoriaprawajazdy = modeleServer.kategoriaprawajazdy,
+                            modeleServer.stawkazadzien = modeleServer.stawkazadzien
+    WHERE input_ID_Modelu = modeleServer.id_modelu;
+END;
+/
+create or replace procedure delete_model(input_ID_Modelu in modeleServer.id_modelu%TYPE) IS 
+BEGIN
+    DELETE FROM ModeleServer WHERE input_ID_Modelu = modeleServer.id_modelu;
 END;
 /
 create or replace procedure insert_new_pojazd(input_NumerVIN in pojazdy.numervin%TYPE,
