@@ -198,11 +198,6 @@ BEGIN
     EXECUTE IMMEDIATE 'CREATE SNAPSHOT LOG
         ON Modele
         WITH PRIMARY KEY,
-        ROWID(Model,
-                PojemnoscSilnika,
-                SrednieSpalanie,
-                KategoriaPrawaJazdy,
-                StawkaZaDzien)
         INCLUDING NEW VALUES';
 END;
 /
