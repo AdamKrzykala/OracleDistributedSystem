@@ -18,6 +18,21 @@ BEGIN
     END;
 END;
 /
+create or replace procedure update_adres(input_ID_Adresu in adresy.id_adresu%TYPE,
+                                         input_KodPocztowy in adresy.kodpocztowy%TYPE,
+                                         input_Miejscowosc in adresy.miejscowosc%TYPE,
+                                         input_Ulica in adresy.ulica%TYPE,
+                                         input_NumerDomu in adresy.numerdomu%TYPE,
+                                         input_NumerMieszkania in adresy.numermieszkania%TYPE) IS 
+BEGIN
+    UPDATE Adresy SET adresy.kodpocztowy = input_KodPocztowy,
+                      adresy.miejscowosc = input_Miejscowosc,
+                      adresy.ulica = input_Ulica,
+                      adresy.numerdomu = input_NumerDomu,
+                      adresy.numermieszkania = input_NumerMieszkania 
+    WHERE input_ID_Adresu = adresy.id_adresu;
+END;
+/
 create or replace procedure insert_new_klient(input_Imie in klienci.imie%TYPE,
                                               input_DrugieImie in klienci.drugieimie%TYPE,
                                               input_Nazwisko in klienci.nazwisko%TYPE,
@@ -59,10 +74,10 @@ BEGIN
     cnt INT := 0;
     BEGIN
         SELECT COUNT(*) INTO cnt FROM modeleServer WHERE input_Model in modeleServer.model AND
-                                                   input_Pojemnosc in modeleServer.pojemnoscsilnika AND
-                                                   input_Spalanie in modeleServer.sredniespalanie AND
-                                                   input_KatPrawaJazdy in modeleServer.kategoriaprawajazdy AND
-                                                   input_Stawka in modeleServer.stawkazadzien;
+                                                       input_Pojemnosc in modeleServer.pojemnoscsilnika AND
+                                                       input_Spalanie in modeleServer.sredniespalanie AND
+                                                       input_KatPrawaJazdy in modeleServer.kategoriaprawajazdy AND
+                                                       input_Stawka in modeleServer.stawkazadzien;
         IF(cnt = 0) THEN
             INSERT INTO ModeleServer(model, pojemnoscsilnika, sredniespalanie, kategoriaprawajazdy, stawkazadzien)
             VALUES(input_Model, input_Pojemnosc, input_Spalanie, input_KatPrawaJazdy, input_Stawka);

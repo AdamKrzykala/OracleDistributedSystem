@@ -72,10 +72,8 @@ BEGIN
     END;
     EXECUTE IMMEDIATE 'CREATE SNAPSHOT ModeleMV
         BUILD IMMEDIATE 
-        REFRESH COMPLETE ON DEMAND
-        START WITH sysdate
+        REFRESH FAST
         NEXT sysdate + (1/(24*60*5))
-        ENABLE QUERY REWRITE
         AS
         SELECT * FROM modeleServer
         ';
