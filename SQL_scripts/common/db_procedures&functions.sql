@@ -33,6 +33,11 @@ BEGIN
     WHERE input_ID_Adresu = adresy.id_adresu;
 END;
 /
+create or replace procedure delete_adres(input_ID_Adresu in adresy.id_adresu%TYPE) IS 
+BEGIN
+    DELETE FROM Adresy WHERE input_ID_Adresu = adresy.id_adresu;
+END;
+/
 create or replace procedure insert_new_klient(input_Imie in klienci.imie%TYPE,
                                               input_DrugieImie in klienci.drugieimie%TYPE,
                                               input_Nazwisko in klienci.nazwisko%TYPE,
@@ -62,6 +67,23 @@ BEGIN
             VALUES(index_value, input_Imie, input_DrugieImie, input_Nazwisko, input_PESEL, input_NrTel, input_KategoriaPrawaJazdy);
         END IF;
     END;
+END;
+/
+create or replace procedure update_klient(input_ID_Klienta in klienci.id_klienta%TYPE,
+                                          input_Imie in klienci.imie%TYPE,
+                                          input_DrugieImie in klienci.drugieimie%TYPE,
+                                          input_Nazwisko in klienci.nazwisko%TYPE,
+                                          input_PESEL in klienci.pesel%TYPE,
+                                          input_NrTel in klienci.numertel%TYPE,
+                                          input_KategoriaPrawaJazdy in klienci.katprawajazdy%TYPE) IS 
+BEGIN
+    UPDATE Klienci SET klienci.imie = input_Imie,
+                       klienci.drugieimie = input_DrugieImie,
+                       klienci.nazwisko = input_Nazwisko,
+                       klienci.pesel = input_PESEL,
+                       klienci.numertel = input_NrTel,
+                       klienci.katprawajazdy = input_KategoriaPrawaJazdy
+    WHERE input_ID_Klienta = klienci.id_klienta;
 END;
 /
 create or replace procedure insert_new_model(input_Model in modeleServer.model%TYPE,
