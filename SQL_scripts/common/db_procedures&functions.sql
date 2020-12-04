@@ -256,6 +256,15 @@ BEGIN
     END;
 END;
 /
+create or replace procedure update_wypozyczenie(input_ID_Wypozyczenia in wypozyczenia.id_wypozyczenia%TYPE,
+                                                input_PlanowanyTerminZwrotu in wypozyczenia.planowanyterminzwrotu%TYPE,
+                                                input_PobranaKaucja in wypozyczenia.pobranakaucja%TYPE) IS 
+BEGIN
+    UPDATE Wypozyczenia SET wypozyczenia.planowanyterminzwrotu = input_PlanowanyTerminZwrotu,
+                            wypozyczenia.pobranakaucja = input_PobranaKaucja
+    WHERE input_ID_Wypozyczenia = wypozyczenia.id_wypozyczenia;
+END;
+/
 create or replace procedure insert_new_zwrot(input_NumerWypozyczalni in wypozyczalnie.numerwypozyczalni%TYPE,
                                              input_Zaplacono in zwroty.zaplacono%TYPE,
                                              input_ZwrotKaucji in zwroty.zwrotkaucji%TYPE,
@@ -293,6 +302,20 @@ BEGIN
             UPDATE wypozyczenia@wypozyczalnia_adam SET id_zwrotu = index_zwrotu WHERE id_wypozyczenia = index_wypozyczenia;
         END IF;
     END;
+END;
+/
+create or replace procedure update_zwrot(input_ID_Zwrotu in zwroty.id_zwrotu%TYPE,
+                                         input_Zaplacono in zwroty.zaplacono%TYPE,
+                                         input_ZwrotKaucji in zwroty.zwrotkaucji%TYPE) IS 
+BEGIN
+    UPDATE Zwroty SET zwroty.zaplacono = input_Zaplacono,
+                      zwroty.zwrotkaucji = input_ZwrotKaucji
+    WHERE input_ID_Zwrotu = zwroty.id_zwrotu;
+END;
+/
+create or replace procedure delete_zwrot(input_ID_Zwrotu in zwroty.id_zwrotu%TYPE) IS 
+BEGIN
+    DELETE FROM Zwroty WHERE input_ID_Zwrotu = zwroty.id_zwrotu;
 END;
 /
 COMMIT;
