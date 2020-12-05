@@ -7,7 +7,7 @@ CREATE DATABASE LINK WYPOZYCZALNIA_ADAM
 CREATE DATABASE LINK WYPOZYCZALNIA_MICHAL 
     CONNECT TO c##mnowak 
     IDENTIFIED BY mnowak5 
-    USING 'ORCLMICHAL';
+    USING 'ORCL6';
     
 --TABLES CONFIGURATION----------------------------------------------------------
 
@@ -22,7 +22,7 @@ BEGIN
                 END IF;
     END;
     EXECUTE IMMEDIATE 'CREATE TABLE Klienci (
-        ID_Klienta      INT             generated always as identity (START with 1 INCREMENT by 1),
+        ID_Klienta      INT             NOT NULL,
         ID_Adresu       INT             not null,
         Imie            VARCHAR(30)     not null,
         Nazwisko        VARCHAR(30)     not null,
@@ -30,7 +30,7 @@ BEGIN
         PESEL           VARCHAR(11)     not null,
         NumerTel        VARCHAR(9)      not null,
         KatPrawaJazdy   CHAR(1)         not null,
-        PRIMARY KEY(ID_Klienta)
+        CONSTRAINT klienci_pk PRIMARY KEY(ID_Klienta)
     )';
 END;
 /
@@ -115,13 +115,13 @@ BEGIN
             END IF;
     END;
     EXECUTE IMMEDIATE 'CREATE TABLE Adresy (
-        ID_Adresu           INT             generated always as identity (START with 1 INCREMENT by 1),
+        ID_Adresu           INT             NOT NULL,
         KodPocztowy         VARCHAR2(6)     not null,
         Miejscowosc         VARCHAR2(30)    not null,
         Ulica               VARCHAR2(30)    not null,
         NumerDomu           INT             not null,
         NumerMieszkania     INT             null,
-        PRIMARY KEY(ID_Adresu)
+        CONSTRAINT adresy_pk PRIMARY KEY(ID_Adresu)
     )';
 END;
 /
@@ -145,7 +145,7 @@ CREATE INDEX idx_Pojazd_NumerVIN               ON Pojazdy(NumerVIN);
 CREATE INDEX idx_Pojazd_NumerRejestracyjny     ON Pojazdy(NumerRejestracyjny);
 
 --Indexes to rentals table creating 
-CREATE INDEX idx_Wypozyczenie_ID_Wypozyczalni   ON Wypozyczenia(ID_Wypozyczalni);
+CREATE INDEX idx_Wypozyczenie_ID_Wypozyczal   ON Wypozyczenia(ID_Wypozyczalni);
 CREATE INDEX idx_Wypozyczenie_ID_Klienta        ON Wypozyczenia(ID_Klienta);
 CREATE INDEX idx_Wypozyczenie_ID_Pojazdu        ON Wypozyczenia(ID_Pojazdu);
 CREATE INDEX idx_Wypozyczenie_ID_Zwrotu         ON Wypozyczenia(ID_Zwrotu);

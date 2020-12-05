@@ -82,7 +82,7 @@ BEGIN
 END;
 /
 
---Rentals id insertion trigger creating
+--Returns id insertion trigger creating
 CREATE OR REPLACE TRIGGER zwroty_on_insert
   BEFORE INSERT ON zwroty
   FOR EACH ROW
@@ -92,6 +92,69 @@ BEGIN
   FROM dual;
 END;
 /
+
+--Customers id sequence creating 
+BEGIN
+    BEGIN
+         EXECUTE IMMEDIATE 'DROP SEQUENCE CUSTOMER_ID_SEQUENCE';
+    EXCEPTION
+         WHEN OTHERS THEN
+                IF SQLCODE != -2289 THEN
+                     RAISE;
+                END IF;
+    END;
+    EXECUTE IMMEDIATE 'CREATE SEQUENCE CUSTOMER_ID_SEQUENCE 
+        INCREMENT BY 1 
+        START WITH 1 
+        MAXVALUE 99999999999999 
+        MINVALUE 1 
+        NOCACHE 
+        ORDER';
+END;
+/
+
+--Customer id insertion trigger creating
+CREATE OR REPLACE TRIGGER klienci_on_insert
+  BEFORE INSERT ON klienci
+  FOR EACH ROW
+BEGIN
+  SELECT CUSTOMER_ID_SEQUENCE.nextval
+  INTO :new.ID_Klienta
+  FROM dual;
+END;
+/
+
+--Addresses id sequence creating 
+BEGIN
+    BEGIN
+         EXECUTE IMMEDIATE 'DROP SEQUENCE ADDRESS_ID_SEQUENCE';
+    EXCEPTION
+         WHEN OTHERS THEN
+                IF SQLCODE != -2289 THEN
+                     RAISE;
+                END IF;
+    END;
+    EXECUTE IMMEDIATE 'CREATE SEQUENCE ADDRESS_ID_SEQUENCE 
+        INCREMENT BY 1 
+        START WITH 1 
+        MAXVALUE 99999999999999 
+        MINVALUE 1 
+        NOCACHE 
+        ORDER';
+END;
+/
+
+--Address id insertion trigger creating
+CREATE OR REPLACE TRIGGER adresy_on_insert
+  BEFORE INSERT ON adresy
+  FOR EACH ROW
+BEGIN
+  SELECT ADDRESS_ID_SEQUENCE.nextval
+  INTO :new.ID_Adresu
+  FROM dual;
+END;
+/
+
 
 --RentalHouses table creating
 BEGIN
@@ -104,11 +167,11 @@ BEGIN
             END IF;
     END;
     EXECUTE IMMEDIATE 'CREATE TABLE Wypozyczalnie (
-        ID_Wypozyczalni     INT       generated always as identity (START with 1 INCREMENT by 1),
+        ID_Wypozyczalni     INT       NOT NULL,
         ID_Adresu           INT       not null,
         NumerWypozyczalni   INT       not null,
         WolneMiejsca        INT       not null,
-        PRIMARY KEY(ID_Wypozyczalni)
+        CONSTRAINT wypozyczalnie_pk PRIMARY KEY(ID_Wypozyczalni)
     )';
 END;
 /
@@ -124,14 +187,76 @@ BEGIN
             END IF;
     END;
     EXECUTE IMMEDIATE 'CREATE TABLE Modele (
-        ID_Modelu               INT             generated always as identity (START with  1 INCREMENT by 1),
+        ID_Modelu               INT             NOT NULL,
         Model                   VARCHAR(30)     not null,
         PojemnoscSilnika        INT             not null,
         SrednieSpalanie         INT             null,
         KategoriaPrawaJazdy     CHAR(1)         not null,
         StawkaZaDzien           FLOAT           not null,
-        PRIMARY KEY(ID_Modelu)
+        CONSTRAINT modele_pk PRIMARY KEY(ID_Modelu)
     )';
+END;
+/
+
+--RentalHouses id sequence creating 
+BEGIN
+    BEGIN
+         EXECUTE IMMEDIATE 'DROP SEQUENCE RENTALHOUSE_ID_SEQUENCE';
+    EXCEPTION
+         WHEN OTHERS THEN
+                IF SQLCODE != -2289 THEN
+                     RAISE;
+                END IF;
+    END;
+    EXECUTE IMMEDIATE 'CREATE SEQUENCE RENTALHOUSE_ID_SEQUENCE 
+        INCREMENT BY 1 
+        START WITH 1 
+        MAXVALUE 99999999999999 
+        MINVALUE 1 
+        NOCACHE 
+        ORDER';
+END;
+/
+
+--Vehicle id insertion trigger creating
+CREATE OR REPLACE TRIGGER wypozyczalnie_on_insert
+  BEFORE INSERT ON wypozyczalnie
+  FOR EACH ROW
+BEGIN
+  SELECT RENTALHOUSE_ID_SEQUENCE.nextval
+  INTO :new.ID_Wypozyczalni
+  FROM dual;
+END;
+/
+
+--Models id sequence creating 
+BEGIN
+    BEGIN
+         EXECUTE IMMEDIATE 'DROP SEQUENCE MODEL_ID_SEQUENCE';
+    EXCEPTION
+         WHEN OTHERS THEN
+                IF SQLCODE != -2289 THEN
+                     RAISE;
+                END IF;
+    END;
+    EXECUTE IMMEDIATE 'CREATE SEQUENCE MODEL_ID_SEQUENCE 
+        INCREMENT BY 1 
+        START WITH 1 
+        MAXVALUE 99999999999999 
+        MINVALUE 1 
+        NOCACHE 
+        ORDER';
+END;
+/
+
+--Vehicle id insertion trigger creating
+CREATE OR REPLACE TRIGGER modele_on_insert
+  BEFORE INSERT ON modele
+  FOR EACH ROW
+BEGIN
+  SELECT MODEL_ID_SEQUENCE.nextval
+  INTO :new.ID_Modelu
+  FROM dual;
 END;
 /
 
@@ -148,7 +273,7 @@ CREATE INDEX idx_Model_Model_idx    ON Modele(Model);
 
 --Creating indexes to rentalHouses table
 CREATE INDEX idx_Wypozyczalnia_ID_Adresu             ON Wypozyczalnie(ID_Adresu);
-CREATE INDEX idx_Wypozyczalnia_ID_NumerWypozyczalni  ON Wypozyczalnie(NumerWypozyczalni);
+CREATE INDEX idx_Wypozyczalnia_ID_NumerWypo  ON Wypozyczalnie(NumerWypozyczalni);
 
 --Creating remote database synonym to pojazdy
 CREATE OR REPLACE PUBLIC SYNONYM remoteVehicles FOR pojazdy@WYPOZYCZALNIA_MICHAL;
@@ -197,7 +322,7 @@ BEGIN
     END;
     EXECUTE IMMEDIATE 'CREATE SNAPSHOT LOG
         ON Modele
-        WITH PRIMARY KEY,
+        WITH PRIMARY KEY
         INCLUDING NEW VALUES';
 END;
 /

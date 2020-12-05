@@ -33,6 +33,28 @@ BEGIN
 END;
 /
 
+--Customer id insertion trigger creating
+CREATE OR REPLACE TRIGGER klienci_on_insert
+  BEFORE INSERT ON klienci
+  FOR EACH ROW
+BEGIN
+  SELECT CUSTOMER_ID_SEQUENCE.nextval@WYPOZYCZALNIA_ADAM
+  INTO :new.ID_Klienta
+  FROM dual;
+END;
+/
+
+--Address id insertion trigger creating
+CREATE OR REPLACE TRIGGER adresy_on_insert
+  BEFORE INSERT ON adresy
+  FOR EACH ROW
+BEGIN
+  SELECT ADDRESS_ID_SEQUENCE.nextval@WYPOZYCZALNIA_ADAM
+  INTO :new.ID_Adresu
+  FROM dual;
+END;
+/
+
 --Creating remote database synonym to models on server
 CREATE OR REPLACE PUBLIC SYNONYM modeleServer FOR modele@WYPOZYCZALNIA_ADAM;
 
@@ -79,21 +101,6 @@ BEGIN
         ';
 END;
 /
-
-----Creating remote refresh group synonym to rentalHousesRefreshGroup
---CREATE OR REPLACE PUBLIC SYNONYM remoteRentalHousesRefreshGroup 
---    FOR rentalHousesRefreshGroup@WYPOZYCZALNIA_ADAM;
---
-----Creating remote refresh group synonym to modelsRefreshGroup
---CREATE OR REPLACE PUBLIC SYNONYM remoteModelsRefreshGroup
---    FOR modelsRefreshGroup@WYPOZYCZALNIA_ADAM;
-
-----Adding snapshots to refresh group on server
---DBMS_REFRESH.ADD(name=>'rentalHousesRefreshGroup@WYPOZYCZALNIA_ADAM', 
---                    list=>'WypozyczalnieServer');
---                    
---DBMS_REFRESH.ADD(name=>'modelsRefreshGroup@WYPOZYCZALNIA_ADAM', 
---                    list=>'ModeleServer');
 
 --Creating remote database synonym to pojazdy
 CREATE OR REPLACE PUBLIC SYNONYM remoteVehicles FOR pojazdy@WYPOZYCZALNIA_ADAM;
