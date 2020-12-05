@@ -76,7 +76,7 @@ BEGIN
     EXECUTE IMMEDIATE 'CREATE SNAPSHOT WypozyczalnieMV
         BUILD IMMEDIATE 
         REFRESH FAST 
-        NEXT sysdate + 1
+        NEXT sysdate + (1/(24*60*6))
         AS
         SELECT * FROM wypozyczalnieServer';
 END;
@@ -95,7 +95,7 @@ BEGIN
     EXECUTE IMMEDIATE 'CREATE SNAPSHOT ModeleMV
         BUILD IMMEDIATE 
         REFRESH FAST
-        NEXT sysdate + (1/(24*60*5))
+        NEXT sysdate + (1/(24*60))
         AS
         SELECT * FROM modeleServer
         ';

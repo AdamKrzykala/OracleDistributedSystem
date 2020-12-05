@@ -91,20 +91,20 @@ BEGIN
     DELETE FROM Klienci WHERE input_ID_Klienta = klienci.id_klienta;
 END;
 /
-create or replace procedure insert_new_model(input_Model in modeleServer.model%TYPE,
-                                             input_Pojemnosc in modeleServer.pojemnoscsilnika%TYPE,
-                                             input_Spalanie in modeleServer.sredniespalanie%TYPE,
-                                             input_KatPrawaJazdy in modeleServer.kategoriaprawajazdy%TYPE,
-                                             input_Stawka in modeleServer.stawkazadzien%TYPE) IS 
+create or replace procedure insert_new_model(input_Model in ModeleServer.model%TYPE,
+                                             input_Pojemnosc in ModeleServer.pojemnoscsilnika%TYPE,
+                                             input_Spalanie in ModeleServer.sredniespalanie%TYPE,
+                                             input_KatPrawaJazdy in ModeleServer.kategoriaprawajazdy%TYPE,
+                                             input_Stawka in ModeleServer.stawkazadzien%TYPE) IS 
 BEGIN
     DECLARE 
     cnt INT := 0;
     BEGIN
-        SELECT COUNT(*) INTO cnt FROM modeleServer WHERE input_Model in modeleServer.model AND
-                                                       input_Pojemnosc in modeleServer.pojemnoscsilnika AND
-                                                       input_Spalanie in modeleServer.sredniespalanie AND
-                                                       input_KatPrawaJazdy in modeleServer.kategoriaprawajazdy AND
-                                                       input_Stawka in modeleServer.stawkazadzien;
+        SELECT COUNT(*) INTO cnt FROM ModeleServer WHERE input_Model in ModeleServer.model AND
+                                                       input_Pojemnosc in ModeleServer.pojemnoscsilnika AND
+                                                       input_Spalanie in ModeleServer.sredniespalanie AND
+                                                       input_KatPrawaJazdy in ModeleServer.kategoriaprawajazdy AND
+                                                       input_Stawka in ModeleServer.stawkazadzien;
         IF(cnt = 0) THEN
             INSERT INTO ModeleServer(model, pojemnoscsilnika, sredniespalanie, kategoriaprawajazdy, stawkazadzien)
             VALUES(input_Model, input_Pojemnosc, input_Spalanie, input_KatPrawaJazdy, input_Stawka);
@@ -112,12 +112,12 @@ BEGIN
     END;
 END;
 /
-create or replace procedure update_model(input_ID_Modelu in modeleServer.id_modelu%TYPE,
-                                         input_Model in modeleServer.model%TYPE,
-                                         input_Pojemnosc in modeleServer.pojemnoscsilnika%TYPE,
-                                         input_Spalanie in modeleServer.sredniespalanie%TYPE,
-                                         input_KatPrawaJazdy in modeleServer.kategoriaprawajazdy%TYPE,
-                                         input_Stawka in modeleServer.stawkazadzien%TYPE) IS 
+create or replace procedure update_model(input_ID_Modelu in MODELEMV.id_modelu%TYPE,
+                                         input_Model in MODELEMV.model%TYPE,
+                                         input_Pojemnosc in MODELEMV.pojemnoscsilnika%TYPE,
+                                         input_Spalanie in MODELEMV.sredniespalanie%TYPE,
+                                         input_KatPrawaJazdy in MODELEMV.kategoriaprawajazdy%TYPE,
+                                         input_Stawka in MODELEMV.stawkazadzien%TYPE) IS 
 BEGIN
     UPDATE ModeleServer SET modeleServer.model = modeleServer.model,
                             modeleServer.pojemnoscsilnika = modeleServer.pojemnoscsilnika,
@@ -127,7 +127,7 @@ BEGIN
     WHERE input_ID_Modelu = modeleServer.id_modelu;
 END;
 /
-create or replace procedure delete_model(input_ID_Modelu in modeleServer.id_modelu%TYPE) IS 
+create or replace procedure delete_model(input_ID_Modelu in MODELEMV.id_modelu%TYPE) IS 
 BEGIN
     DELETE FROM ModeleServer WHERE input_ID_Modelu = modeleServer.id_modelu;
 END;
@@ -186,8 +186,8 @@ BEGIN
     DELETE FROM Pojazdy WHERE input_ID_Pojazdu = pojazdy.id_pojazdu;
 END;
 /
-create or replace procedure insert_new_wypozyczalnia(input_NumerWypozyczalni in wypozyczalnie.numerwypozyczalni%TYPE,
-                                                     input_IloscMiejsc in wypozyczalnie.wolnemiejsca%TYPE,
+create or replace procedure insert_new_wypozyczalnia(input_NumerWypozyczalni in WYPOZYCZALNIEMV.numerwypozyczalni%TYPE,
+                                                     input_IloscMiejsc in WYPOZYCZALNIEMV.wolnemiejsca%TYPE,
                                                      input_KodPocztowy in adresy.kodpocztowy%TYPE,
                                                      input_Miejscowosc in adresy.miejscowosc%TYPE,
                                                      input_Ulica in adresy.ulica%TYPE,
@@ -201,36 +201,38 @@ BEGIN
         SELECT COUNT(*) INTO cnt FROM Adresy WHERE input_KodPocztowy = adresy.kodpocztowy AND
                                                    input_Miejscowosc = adresy.miejscowosc AND
                                                    input_Ulica = adresy.ulica AND
+                                                   input_NumerDomu = adresy.numerdomu AND
                                                    input_NumerMieszkania = adresy.numermieszkania;
         IF(cnt = 0) THEN
             insert_new_adres(input_KodPocztowy, input_Miejscowosc, input_Ulica, input_NumerDomu, input_NumerMieszkania);
-            
             SELECT ID_Adresu INTO index_value FROM Adresy WHERE adresy.kodpocztowy = input_KodPocztowy AND
-                                                                adresy.miejscowosc = input_Miejscowosc AND 
-                                                                adresy.ulica = input_Ulica AND
-                                                                adresy.numerdomu = input_NumerDomu AND
-                                                                adresy.numermieszkania = input_NumerMieszkania;
-            INSERT INTO Wypozyczalnie@WYPOZYCZALNIA_ADAM(id_adresu, wolnemiejsca, numerwypozyczalni)
+                                                            adresy.miejscowosc = input_Miejscowosc AND 
+                                                            adresy.ulica = input_Ulica AND
+                                                            adresy.numerdomu = input_NumerDomu AND
+                                                            adresy.numermieszkania = input_NumerMieszkania;
+            INSERT INTO wypozyczalnieServer(id_adresu, wolnemiejsca, numerwypozyczalni)
             VALUES(index_value, input_IloscMiejsc, input_NumerWypozyczalni);
         END IF;
+        
+        
     END;
 END;
 /
-create or replace procedure update_wypozyczalnia(input_ID_Wypozyczalni in wypozyczalnie.id_wypozyczalni%TYPE,
-                                                 input_NumerWypozyczalni in wypozyczalnie.numerwypozyczalni%TYPE,
-                                                 input_IloscMiejsc in wypozyczalnie.wolnemiejsca%TYPE) IS 
+create or replace procedure update_wypozyczalnia(input_ID_Wypozyczalni in WYPOZYCZALNIEMV.id_wypozyczalni%TYPE,
+                                                 input_NumerWypozyczalni in WYPOZYCZALNIEMV.numerwypozyczalni%TYPE,
+                                                 input_IloscMiejsc in WYPOZYCZALNIEMV.wolnemiejsca%TYPE) IS 
 BEGIN
-    UPDATE Wypozyczalnie SET wypozyczalnie.numerwypozyczalni = input_NumerWypozyczalni,
-                             wypozyczalnie.wolnemiejsca = input_IloscMiejsc
-    WHERE input_ID_Wypozyczalni = wypozyczalnie.id_wypozyczalni;
+    UPDATE wypozyczalnieServer SET wypozyczalnieServer.numerwypozyczalni = input_NumerWypozyczalni,
+                             wypozyczalnieServer.wolnemiejsca = input_IloscMiejsc
+    WHERE input_ID_Wypozyczalni = wypozyczalnieServer.id_wypozyczalni;
 END;
 /
-create or replace procedure delete_wypozyczalnia(input_ID_Wypozyczalni in wypozyczalnie.id_wypozyczalni%TYPE) IS 
+create or replace procedure delete_wypozyczalnia(input_ID_Wypozyczalni in WYPOZYCZALNIEMV.id_wypozyczalni%TYPE) IS 
 BEGIN
-    DELETE FROM Wypozyczalnie WHERE input_ID_Wypozyczalni = wypozyczalnie.id_wypozyczalni;
+    DELETE FROM wypozyczalnieServer WHERE input_ID_Wypozyczalni = wypozyczalnieServer.id_wypozyczalni;
 END;
 /
-create or replace procedure insert_new_wypozyczenie(input_NumerWypozyczalni in wypozyczalnie.numerwypozyczalni%TYPE,
+create or replace procedure insert_new_wypozyczenie(input_NumerWypozyczalni in wypozyczalnieServer.numerwypozyczalni%TYPE,
                                                     input_PeselKlienta in klienci.pesel%TYPE,
                                                     input_NumerRejPojazdu in pojazdy.numerrejestracyjny%TYPE,
                                                     input_PlanowanyTerminZwrotu in wypozyczenia.planowanyterminzwrotu%TYPE,
@@ -244,7 +246,7 @@ BEGIN
     cnt INT := 0;
     active_rental Wypozyczenia%ROWTYPE;
     BEGIN
-        SELECT ID_Wypozyczalni INTO index_wypozyczalni FROM Wypozyczalnie WHERE wypozyczalnie.numerwypozyczalni = input_NumerWypozyczalni;
+        SELECT ID_Wypozyczalni INTO index_wypozyczalni FROM wypozyczalnieServer WHERE wypozyczalnieServer.numerwypozyczalni = input_NumerWypozyczalni;
         SELECT ID_Klienta INTO index_klienta FROM Klienci WHERE klienci.pesel = input_PeselKlienta;
         SELECT ID_Pojazdu INTO index_pojazdu FROM Pojazdy WHERE pojazdy.numerrejestracyjny = input_NumerRejPojazdu;
         
@@ -265,7 +267,7 @@ BEGIN
     WHERE input_ID_Wypozyczenia = wypozyczenia.id_wypozyczenia;
 END;
 /
-create or replace procedure insert_new_zwrot(input_NumerWypozyczalni in wypozyczalnie.numerwypozyczalni%TYPE,
+create or replace procedure insert_new_zwrot(input_NumerWypozyczalni in wypozyczalnieServer.numerwypozyczalni%TYPE,
                                              input_Zaplacono in zwroty.zaplacono%TYPE,
                                              input_ZwrotKaucji in zwroty.zwrotkaucji%TYPE,
                                              input_PeselKlienta in klienci.pesel%TYPE,
@@ -281,7 +283,7 @@ BEGIN
     kara_za_spoznienie zwroty.karazaspoznienie%TYPE := 0;
     cnt INT := 0;
     BEGIN
-        SELECT ID_Wypozyczalni INTO index_wypozyczalni FROM Wypozyczalnie WHERE wypozyczalnie.numerwypozyczalni = input_NumerWypozyczalni;
+        SELECT ID_Wypozyczalni INTO index_wypozyczalni FROM wypozyczalnieServer WHERE wypozyczalnieServer.numerwypozyczalni = input_NumerWypozyczalni;
         SELECT ID_Klienta INTO index_klienta FROM Klienci WHERE klienci.pesel = input_PeselKlienta;
         SELECT ID_Pojazdu INTO index_pojazdu FROM Pojazdy WHERE pojazdy.numerrejestracyjny = input_NumerRejPojazdu;
         

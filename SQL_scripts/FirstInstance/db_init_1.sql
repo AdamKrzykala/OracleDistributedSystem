@@ -155,7 +155,6 @@ BEGIN
 END;
 /
 
-
 --RentalHouses table creating
 BEGIN
     BEGIN
@@ -218,7 +217,7 @@ BEGIN
 END;
 /
 
---Vehicle id insertion trigger creating
+--RentalHouse id insertion trigger creating
 CREATE OR REPLACE TRIGGER wypozyczalnie_on_insert
   BEFORE INSERT ON wypozyczalnie
   FOR EACH ROW
@@ -249,7 +248,7 @@ BEGIN
 END;
 /
 
---Vehicle id insertion trigger creating
+--Model id insertion trigger creating
 CREATE OR REPLACE TRIGGER modele_on_insert
   BEFORE INSERT ON modele
   FOR EACH ROW
