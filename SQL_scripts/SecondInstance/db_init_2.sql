@@ -55,12 +55,6 @@ BEGIN
 END;
 /
 
---Creating remote database synonym to models on server
-CREATE OR REPLACE PUBLIC SYNONYM modeleServer FOR modele@WYPOZYCZALNIA_ADAM;
-
---Creating remote database synonym to rentalHouses on server
-CREATE OR REPLACE PUBLIC SYNONYM wypozyczalnieServer FOR wypozyczalnie@WYPOZYCZALNIA_ADAM;
-
 
 --Snapshot of rentalHouses for slave
 --Creating snapshot log for models

@@ -125,6 +125,13 @@ BEGIN
     )';
 END;
 /
+
+--Creating remote database synonym to models on server
+CREATE OR REPLACE PUBLIC SYNONYM modeleServer FOR modele@WYPOZYCZALNIA_ADAM;
+
+--Creating remote database synonym to rentalHouses on server
+CREATE OR REPLACE PUBLIC SYNONYM wypozyczalnieServer FOR wypozyczalnie@WYPOZYCZALNIA_ADAM;
+
 --FOREIGN KEYS CONFIGURATION----------------------------------------------------
 BEGIN
     EXECUTE IMMEDIATE 'ALTER TABLE Klienci ADD CONSTRAINT fk_KlientAdres FOREIGN KEY (ID_Adresu) REFERENCES Adresy(ID_Adresu)';

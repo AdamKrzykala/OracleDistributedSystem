@@ -283,12 +283,6 @@ CREATE OR REPLACE PUBLIC SYNONYM remoteRentals FOR wypozyczenia@WYPOZYCZALNIA_MI
 --Creating remote database synonym to zwroty
 CREATE OR REPLACE PUBLIC SYNONYM remoteReturns FOR zwroty@WYPOZYCZALNIA_MICHAL;
 
---Creating remote database synonym to models on server
-CREATE OR REPLACE PUBLIC SYNONYM ModeleServer FOR modele@WYPOZYCZALNIA_ADAM;
-
---Creating remote database synonym to rentalHouses on server
-CREATE OR REPLACE PUBLIC SYNONYM WypozyczalnieServer FOR wypozyczalnie@WYPOZYCZALNIA_ADAM;
-
 --Creating snapshot log for rentalHouses
 BEGIN
     BEGIN

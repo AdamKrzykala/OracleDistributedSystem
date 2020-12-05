@@ -112,12 +112,12 @@ BEGIN
     END;
 END;
 /
-create or replace procedure update_model(input_ID_Modelu in MODELEMV.id_modelu%TYPE,
-                                         input_Model in MODELEMV.model%TYPE,
-                                         input_Pojemnosc in MODELEMV.pojemnoscsilnika%TYPE,
-                                         input_Spalanie in MODELEMV.sredniespalanie%TYPE,
-                                         input_KatPrawaJazdy in MODELEMV.kategoriaprawajazdy%TYPE,
-                                         input_Stawka in MODELEMV.stawkazadzien%TYPE) IS 
+create or replace procedure update_model(input_ID_Modelu in modeleServer.id_modelu%TYPE,
+                                         input_Model in modeleServer.model%TYPE,
+                                         input_Pojemnosc in modeleServer.pojemnoscsilnika%TYPE,
+                                         input_Spalanie in modeleServer.sredniespalanie%TYPE,
+                                         input_KatPrawaJazdy in modeleServer.kategoriaprawajazdy%TYPE,
+                                         input_Stawka in modeleServer.stawkazadzien%TYPE) IS 
 BEGIN
     UPDATE ModeleServer SET modeleServer.model = modeleServer.model,
                             modeleServer.pojemnoscsilnika = modeleServer.pojemnoscsilnika,
@@ -127,7 +127,7 @@ BEGIN
     WHERE input_ID_Modelu = modeleServer.id_modelu;
 END;
 /
-create or replace procedure delete_model(input_ID_Modelu in MODELEMV.id_modelu%TYPE) IS 
+create or replace procedure delete_model(input_ID_Modelu in modeleServer.id_modelu%TYPE) IS 
 BEGIN
     DELETE FROM ModeleServer WHERE input_ID_Modelu = modeleServer.id_modelu;
 END;
@@ -186,8 +186,8 @@ BEGIN
     DELETE FROM Pojazdy WHERE input_ID_Pojazdu = pojazdy.id_pojazdu;
 END;
 /
-create or replace procedure insert_new_wypozyczalnia(input_NumerWypozyczalni in WYPOZYCZALNIEMV.numerwypozyczalni%TYPE,
-                                                     input_IloscMiejsc in WYPOZYCZALNIEMV.wolnemiejsca%TYPE,
+create or replace procedure insert_new_wypozyczalnia(input_NumerWypozyczalni in wypozyczalnieServer.numerwypozyczalni%TYPE,
+                                                     input_IloscMiejsc in wypozyczalnieServer.wolnemiejsca%TYPE,
                                                      input_KodPocztowy in adresy.kodpocztowy%TYPE,
                                                      input_Miejscowosc in adresy.miejscowosc%TYPE,
                                                      input_Ulica in adresy.ulica%TYPE,
@@ -218,16 +218,16 @@ BEGIN
     END;
 END;
 /
-create or replace procedure update_wypozyczalnia(input_ID_Wypozyczalni in WYPOZYCZALNIEMV.id_wypozyczalni%TYPE,
-                                                 input_NumerWypozyczalni in WYPOZYCZALNIEMV.numerwypozyczalni%TYPE,
-                                                 input_IloscMiejsc in WYPOZYCZALNIEMV.wolnemiejsca%TYPE) IS 
+create or replace procedure update_wypozyczalnia(input_ID_Wypozyczalni in wypozyczalnieServer.id_wypozyczalni%TYPE,
+                                                 input_NumerWypozyczalni in wypozyczalnieServer.numerwypozyczalni%TYPE,
+                                                 input_IloscMiejsc in wypozyczalnieServer.wolnemiejsca%TYPE) IS 
 BEGIN
     UPDATE wypozyczalnieServer SET wypozyczalnieServer.numerwypozyczalni = input_NumerWypozyczalni,
                              wypozyczalnieServer.wolnemiejsca = input_IloscMiejsc
     WHERE input_ID_Wypozyczalni = wypozyczalnieServer.id_wypozyczalni;
 END;
 /
-create or replace procedure delete_wypozyczalnia(input_ID_Wypozyczalni in WYPOZYCZALNIEMV.id_wypozyczalni%TYPE) IS 
+create or replace procedure delete_wypozyczalnia(input_ID_Wypozyczalni in wypozyczalnieServer.id_wypozyczalni%TYPE) IS 
 BEGIN
     DELETE FROM wypozyczalnieServer WHERE input_ID_Wypozyczalni = wypozyczalnieServer.id_wypozyczalni;
 END;
