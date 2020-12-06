@@ -148,4 +148,15 @@ CREATE OR REPLACE PUBLIC SYNONYM remoteRentals FOR wypozyczenia@WYPOZYCZALNIA_AD
 --Creating remote database synonym to zwroty
 CREATE OR REPLACE PUBLIC SYNONYM remoteReturns FOR zwroty@WYPOZYCZALNIA_ADAM;
 
+--Peer-to-peer master site concatenation
+CREATE OR REPLACE VIEW SHOW_ALL_CLIENTS AS
+SELECT * FROM klienci
+UNION ALL
+SELECT * FROM kliencimaster1;
+
+CREATE OR REPLACE VIEW SHOW_ALL_ADDRESSES AS
+SELECT * FROM adresy
+UNION ALL
+SELECT * FROM adresymaster1;
+
 COMMIT;

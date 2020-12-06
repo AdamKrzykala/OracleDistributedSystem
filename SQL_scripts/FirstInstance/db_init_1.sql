@@ -340,7 +340,7 @@ BEGIN
     EXECUTE IMMEDIATE 'CREATE SNAPSHOT KlienciMaster2
         BUILD IMMEDIATE 
         REFRESH FAST
-        NEXT sysdate + (1/(24*60))
+        NEXT sysdate + (1/(24*60*10))
         AS
         SELECT * FROM klienci@WYPOZYCZALNIA_MICHAL
         ';
@@ -362,7 +362,7 @@ BEGIN
     EXECUTE IMMEDIATE 'CREATE SNAPSHOT AdresyMaster2
         BUILD IMMEDIATE 
         REFRESH FAST
-        NEXT sysdate + (1/(24*60))
+        NEXT sysdate + (1/(24*60*10))
         AS
         SELECT * FROM adresy@WYPOZYCZALNIA_MICHAL
         ';
@@ -377,5 +377,17 @@ CREATE OR REPLACE PUBLIC SYNONYM remoteRentals FOR wypozyczenia@WYPOZYCZALNIA_MI
 
 --Creating remote database synonym to zwroty
 CREATE OR REPLACE PUBLIC SYNONYM remoteReturns FOR zwroty@WYPOZYCZALNIA_MICHAL;
+
+--Peer-to-peer master site concatenation
+CREATE OR REPLACE VIEW SHOW_ALL_CLIENTS AS
+SELECT * FROM klienci
+UNION ALL
+SELECT * FROM kliencimaster2;
+
+CREATE OR REPLACE VIEW SHOW_ALL_ADDRESSES AS
+SELECT * FROM adresy
+UNION ALL
+SELECT * FROM adresymaster2;
+
 
 COMMIT;
