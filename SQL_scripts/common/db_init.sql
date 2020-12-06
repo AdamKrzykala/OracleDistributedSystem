@@ -10,7 +10,7 @@ CREATE DATABASE LINK WYPOZYCZALNIA_ADAM
 CREATE DATABASE LINK WYPOZYCZALNIA_MICHAL
     CONNECT TO c##mnowak 
     IDENTIFIED BY mnowak5
-    USING 'ORCL6';
+    USING 'orcl6';
     
 --TABLES CONFIGURATION----------------------------------------------------------
 
