@@ -11,17 +11,6 @@ BEGIN
 END;
 /
 
---Model id insertion trigger creating
-CREATE OR REPLACE TRIGGER modele_on_insert
-  BEFORE INSERT ON modele
-  FOR EACH ROW
-BEGIN
-  SELECT MODEL_ID_SEQUENCE.nextval@WYPOZYCZALNIA_ADAM
-  INTO :new.ID_Modelu
-  FROM dual;
-END;
-/
-
 --Rentals id insertion trigger creating
 CREATE OR REPLACE TRIGGER wypozyczenia_on_insert
   BEFORE INSERT ON wypozyczenia
@@ -62,17 +51,6 @@ CREATE OR REPLACE TRIGGER adresy_on_insert
 BEGIN
   SELECT ADDRESS_ID_SEQUENCE.nextval@WYPOZYCZALNIA_ADAM
   INTO :new.ID_Adresu
-  FROM dual;
-END;
-/
-
---RentalHouse id insertion trigger creating
-CREATE OR REPLACE TRIGGER wypozyczalnie_on_insert
-  BEFORE INSERT ON wypozyczalnie
-  FOR EACH ROW
-BEGIN
-  SELECT RENTALHOUSE_ID_SEQUENCE.nextval@WYPOZYCZALNIA_ADAM
-  INTO :new.ID_Wypozyczalni
   FROM dual;
 END;
 /
