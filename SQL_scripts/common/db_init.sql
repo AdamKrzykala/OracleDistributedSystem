@@ -1,5 +1,5 @@
---drop DATABASE link WYPOZYCZALNIA_MICHAL;
---drop DATABASE link WYPOZYCZALNIA_ADAM;
+drop DATABASE link WYPOZYCZALNIA_MICHAL;
+drop DATABASE link WYPOZYCZALNIA_ADAM;
 
 CREATE DATABASE LINK WYPOZYCZALNIA_ADAM 
     CONNECT TO c##adam 
@@ -10,7 +10,7 @@ CREATE DATABASE LINK WYPOZYCZALNIA_ADAM
 CREATE DATABASE LINK WYPOZYCZALNIA_MICHAL
     CONNECT TO c##mnowak 
     IDENTIFIED BY mnowak5
-    USING 'ORCLMICHAL';
+    USING 'ORCL6';
     
 --TABLES CONFIGURATION----------------------------------------------------------
 
@@ -105,7 +105,6 @@ BEGIN
 END;
 /
 
-
 --Vehicles table creating
 BEGIN
     BEGIN
@@ -130,12 +129,6 @@ BEGIN
     )';
 END;
 /
-
---Creating remote database synonym to models on server
-CREATE OR REPLACE PUBLIC SYNONYM modeleServer FOR modele@WYPOZYCZALNIA_ADAM;
-
---Creating remote database synonym to rentalHouses on server
-CREATE OR REPLACE PUBLIC SYNONYM wypozyczalnieServer FOR wypozyczalnie@WYPOZYCZALNIA_ADAM;
 
 --FOREIGN KEYS CONFIGURATION----------------------------------------------------
 BEGIN
@@ -168,5 +161,43 @@ CREATE INDEX idx_Zwrot_ID_Wypozyczalni      ON Zwroty(ID_Wypozyczalni);
 --Creating indexes to addresses table
 CREATE INDEX idx_Adres_KodPocztowy      ON Adresy(KodPocztowy);
 CREATE INDEX idx_Adres_Miejscowosc      ON Adresy(Miejscowosc);
+
+--Creating remote database synonym to models on server
+CREATE OR REPLACE PUBLIC SYNONYM modeleServer FOR modele@WYPOZYCZALNIA_ADAM;
+
+--Creating remote database synonym to rentalHouses on server
+CREATE OR REPLACE PUBLIC SYNONYM wypozyczalnieServer FOR wypozyczalnie@WYPOZYCZALNIA_ADAM;
+
+BEGIN
+    BEGIN
+         EXECUTE IMMEDIATE 'DROP SNAPSHOT LOG ON Klienci';
+    EXCEPTION
+         WHEN OTHERS THEN
+            IF SQLCODE != -12002 THEN
+                 RAISE;
+            END IF;
+    END;
+    EXECUTE IMMEDIATE 'CREATE SNAPSHOT LOG
+        ON Klienci
+        WITH PRIMARY KEY
+        INCLUDING NEW VALUES';
+END;
+/
+
+BEGIN
+    BEGIN
+         EXECUTE IMMEDIATE 'DROP SNAPSHOT LOG ON Adresy';
+    EXCEPTION
+         WHEN OTHERS THEN
+            IF SQLCODE != -12002 THEN
+                 RAISE;
+            END IF;
+    END;
+    EXECUTE IMMEDIATE 'CREATE SNAPSHOT LOG
+        ON Adresy
+        WITH PRIMARY KEY
+        INCLUDING NEW VALUES';
+END;
+/
 
 COMMIT;

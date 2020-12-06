@@ -1,5 +1,62 @@
 --FIRST DB INDIVIDUAL INIT----------------------------------------------------------
 
+--RentalHouses table creating
+BEGIN
+    BEGIN
+        EXECUTE IMMEDIATE 'DROP TABLE Wypozyczalnie';
+    EXCEPTION
+         WHEN OTHERS THEN
+            IF SQLCODE != -942 THEN
+                 RAISE;
+            END IF;
+    END;
+    EXECUTE IMMEDIATE 'CREATE TABLE Wypozyczalnie (
+        ID_Wypozyczalni     INT       NOT NULL,
+        ID_Adresu           INT       not null,
+        NumerWypozyczalni   INT       not null,
+        WolneMiejsca        INT       not null,
+        CONSTRAINT wypozyczalnie_pk PRIMARY KEY(ID_Wypozyczalni)
+    )';
+END;
+/
+
+--Models table creating
+BEGIN
+    BEGIN
+         EXECUTE IMMEDIATE 'DROP TABLE Modele';
+    EXCEPTION
+         WHEN OTHERS THEN
+            IF SQLCODE != -942 THEN
+                 RAISE;
+            END IF;
+    END;
+    EXECUTE IMMEDIATE 'CREATE TABLE Modele (
+        ID_Modelu               INT             NOT NULL,
+        Model                   VARCHAR(30)     not null,
+        PojemnoscSilnika        INT             not null,
+        SrednieSpalanie         INT             null,
+        KategoriaPrawaJazdy     CHAR(1)         not null,
+        StawkaZaDzien           FLOAT           not null,
+        CONSTRAINT modele_pk PRIMARY KEY(ID_Modelu)
+    )';
+END;
+/
+
+--FOREIGN KEYS CONFIGURATION----------------------------------------------------
+BEGIN
+    EXECUTE IMMEDIATE 'ALTER TABLE Pojazdy ADD CONSTRAINT fk_PojazdModel FOREIGN KEY (ID_Modelu) REFERENCES Modele(ID_Modelu)';
+    EXECUTE IMMEDIATE 'ALTER TABLE Wypozyczenia ADD CONSTRAINT fk_WypozyczenieWypozyczalnia FOREIGN KEY (ID_Wypozyczalni) REFERENCES Wypozyczalnie(ID_Wypozyczalni)';
+    EXECUTE IMMEDIATE 'ALTER TABLE Zwroty ADD CONSTRAINT fk_ZwrotWypozyczalnia FOREIGN KEY (ID_Wypozyczalni) REFERENCES Wypozyczalnie(ID_Wypozyczalni)';
+END;
+/
+
+--Indexes to models table creating
+CREATE INDEX idx_Model_Model_idx    ON Modele(Model);
+
+--Creating indexes to rentalHouses table
+CREATE INDEX idx_Wypozyczalnia_ID_Adresu             ON Wypozyczalnie(ID_Adresu);
+CREATE INDEX idx_Wypozyczalnia_ID_NumerWypo  ON Wypozyczalnie(NumerWypozyczalni);
+
 --Vehilce id sequence creating 
 BEGIN
     BEGIN
@@ -93,48 +150,6 @@ BEGIN
 END;
 /
 
---RentalHouses table creating
-BEGIN
-    BEGIN
-        EXECUTE IMMEDIATE 'DROP TABLE Wypozyczalnie';
-    EXCEPTION
-         WHEN OTHERS THEN
-            IF SQLCODE != -942 THEN
-                 RAISE;
-            END IF;
-    END;
-    EXECUTE IMMEDIATE 'CREATE TABLE Wypozyczalnie (
-        ID_Wypozyczalni     INT       NOT NULL,
-        ID_Adresu           INT       not null,
-        NumerWypozyczalni   INT       not null,
-        WolneMiejsca        INT       not null,
-        CONSTRAINT wypozyczalnie_pk PRIMARY KEY(ID_Wypozyczalni)
-    )';
-END;
-/
-
---Models table creating
-BEGIN
-    BEGIN
-         EXECUTE IMMEDIATE 'DROP TABLE Modele';
-    EXCEPTION
-         WHEN OTHERS THEN
-            IF SQLCODE != -942 THEN
-                 RAISE;
-            END IF;
-    END;
-    EXECUTE IMMEDIATE 'CREATE TABLE Modele (
-        ID_Modelu               INT             NOT NULL,
-        Model                   VARCHAR(30)     not null,
-        PojemnoscSilnika        INT             not null,
-        SrednieSpalanie         INT             null,
-        KategoriaPrawaJazdy     CHAR(1)         not null,
-        StawkaZaDzien           FLOAT           not null,
-        CONSTRAINT modele_pk PRIMARY KEY(ID_Modelu)
-    )';
-END;
-/
-
 --RentalHouses id sequence creating 
 BEGIN
     BEGIN
@@ -197,30 +212,6 @@ BEGIN
 END;
 /
 
---FOREIGN KEYS CONFIGURATION----------------------------------------------------
-BEGIN
-    EXECUTE IMMEDIATE 'ALTER TABLE Pojazdy ADD CONSTRAINT fk_PojazdModel FOREIGN KEY (ID_Modelu) REFERENCES Modele(ID_Modelu)';
-    EXECUTE IMMEDIATE 'ALTER TABLE Wypozyczenia ADD CONSTRAINT fk_WypozyczenieWypozyczalnia FOREIGN KEY (ID_Wypozyczalni) REFERENCES Wypozyczalnie(ID_Wypozyczalni)';
-    EXECUTE IMMEDIATE 'ALTER TABLE Zwroty ADD CONSTRAINT fk_ZwrotWypozyczalnia FOREIGN KEY (ID_Wypozyczalni) REFERENCES Wypozyczalnie(ID_Wypozyczalni)';
-END;
-/
-
---Indexes to models table creating
-CREATE INDEX idx_Model_Model_idx    ON Modele(Model);
-
---Creating indexes to rentalHouses table
-CREATE INDEX idx_Wypozyczalnia_ID_Adresu             ON Wypozyczalnie(ID_Adresu);
-CREATE INDEX idx_Wypozyczalnia_ID_NumerWypo  ON Wypozyczalnie(NumerWypozyczalni);
-
---Creating remote database synonym to pojazdy
-CREATE OR REPLACE PUBLIC SYNONYM remoteVehicles FOR pojazdy@WYPOZYCZALNIA_MICHAL;
-
---Creating remote database synonym to wypozyczenia
-CREATE OR REPLACE PUBLIC SYNONYM remoteRentals FOR wypozyczenia@WYPOZYCZALNIA_MICHAL;
-
---Creating remote database synonym to zwroty
-CREATE OR REPLACE PUBLIC SYNONYM remoteReturns FOR zwroty@WYPOZYCZALNIA_MICHAL;
-
 --Customers id sequence creating 
 BEGIN
     BEGIN
@@ -238,6 +229,17 @@ BEGIN
         MINVALUE 1 
         NOCACHE 
         ORDER';
+END;
+/
+
+--Customer id insertion trigger creating
+CREATE OR REPLACE TRIGGER klienci_on_insert
+  BEFORE INSERT ON klienci
+  FOR EACH ROW
+BEGIN
+  SELECT CUSTOMER_ID_SEQUENCE.nextval
+  INTO :new.ID_Klienta
+  FROM dual;
 END;
 /
 
@@ -261,17 +263,6 @@ BEGIN
 END;
 /
 
---Customer id insertion trigger creating
-CREATE OR REPLACE TRIGGER klienci_on_insert
-  BEFORE INSERT ON klienci
-  FOR EACH ROW
-BEGIN
-  SELECT CUSTOMER_ID_SEQUENCE.nextval
-  INTO :new.ID_Klienta
-  FROM dual;
-END;
-/
-
 --Address id insertion trigger creating
 CREATE OR REPLACE TRIGGER adresy_on_insert
   BEFORE INSERT ON adresy
@@ -284,6 +275,16 @@ END;
 /
 
 
+--Creating remote database synonym to pojazdy
+CREATE OR REPLACE PUBLIC SYNONYM remoteVehicles FOR pojazdy@WYPOZYCZALNIA_MICHAL;
+
+--Creating remote database synonym to wypozyczenia
+CREATE OR REPLACE PUBLIC SYNONYM remoteRentals FOR wypozyczenia@WYPOZYCZALNIA_MICHAL;
+
+--Creating remote database synonym to zwroty
+CREATE OR REPLACE PUBLIC SYNONYM remoteReturns FOR zwroty@WYPOZYCZALNIA_MICHAL;
+
+--SERVER-SLAVE SNAPSHOTS----------------------------------
 --Creating snapshot log for rentalHouses
 BEGIN
     BEGIN
@@ -320,23 +321,12 @@ BEGIN
         INCLUDING NEW VALUES';
 END;
 /
+-----------------------------------------------------------
+
+
 --PEER-TO-PEER SNAPSHOTS-----------------------------------
 --Creating snapshot log for customers 1 direction
-BEGIN
-    BEGIN
-         EXECUTE IMMEDIATE 'DROP SNAPSHOT LOG ON Klienci';
-    EXCEPTION
-         WHEN OTHERS THEN
-            IF SQLCODE != -12002 THEN
-                 RAISE;
-            END IF;
-    END;
-    EXECUTE IMMEDIATE 'CREATE SNAPSHOT LOG
-        ON Klienci
-        WITH PRIMARY KEY
-        INCLUDING NEW VALUES';
-END;
-/
+-- IN COMMON FILE 
 --Snapshot of customers from 2 MASTER
 BEGIN
     BEGIN
@@ -356,25 +346,36 @@ BEGIN
         ';
 END;
 /
--------------------------------------------------------
-----Creating refreshing group for rentalHouses snapshot
-----Refreshing each one day or after inserting
---BEGIN
---    DBMS_REFRESH.make(name=>'rentalHousesRefreshGroup',
---                                list=>'',
---                                next_date=>sysdate + (1/(24*60*60)),
---                                interval=>'sysdate + 1',
---                                implicit_destroy=>FALSE);
---    END;
---/
-----Creating refreshing group for models snapshot
-----Refreshing each 6 seconds
---BEGIN
---    DBMS_REFRESH.make(name=>'modelsRefreshGroup',
---                                list=>'',
---                                next_date=>sysdate + (1/(24*60*60)),
---                                interval=>'sysdate + (1/(24*60*10))',
---                                implicit_destroy=>FALSE);
---END;
+
+--Creating snapshot log for addresses 1 direction
+-- IN COMMON FILE
+--Snapshot of addresses from 2 MASTER
+BEGIN
+    BEGIN
+         EXECUTE IMMEDIATE 'DROP SNAPSHOT AdresyMaster2';
+    EXCEPTION
+         WHEN OTHERS THEN
+            IF SQLCODE != -12003 THEN
+                 RAISE;
+            END IF;
+    END;
+    EXECUTE IMMEDIATE 'CREATE SNAPSHOT AdresyMaster2
+        BUILD IMMEDIATE 
+        REFRESH FAST
+        NEXT sysdate + (1/(24*60))
+        AS
+        SELECT * FROM adresy@WYPOZYCZALNIA_MICHAL
+        ';
+END;
+/
+
+--Creating remote database synonym to pojazdy
+CREATE OR REPLACE PUBLIC SYNONYM remoteVehicles FOR pojazdy@WYPOZYCZALNIA_MICHAL;
+
+--Creating remote database synonym to wypozyczenia
+CREATE OR REPLACE PUBLIC SYNONYM remoteRentals FOR wypozyczenia@WYPOZYCZALNIA_MICHAL;
+
+--Creating remote database synonym to zwroty
+CREATE OR REPLACE PUBLIC SYNONYM remoteReturns FOR zwroty@WYPOZYCZALNIA_MICHAL;
 
 COMMIT;

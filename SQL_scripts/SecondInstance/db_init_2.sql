@@ -11,6 +11,17 @@ BEGIN
 END;
 /
 
+--Model id insertion trigger creating
+CREATE OR REPLACE TRIGGER modele_on_insert
+  BEFORE INSERT ON modele
+  FOR EACH ROW
+BEGIN
+  SELECT MODEL_ID_SEQUENCE.nextval@WYPOZYCZALNIA_ADAM
+  INTO :new.ID_Modelu
+  FROM dual;
+END;
+/
+
 --Rentals id insertion trigger creating
 CREATE OR REPLACE TRIGGER wypozyczenia_on_insert
   BEFORE INSERT ON wypozyczenia
@@ -55,6 +66,16 @@ BEGIN
 END;
 /
 
+--RentalHouse id insertion trigger creating
+CREATE OR REPLACE TRIGGER wypozyczalnie_on_insert
+  BEFORE INSERT ON wypozyczalnie
+  FOR EACH ROW
+BEGIN
+  SELECT RENTALHOUSE_ID_SEQUENCE.nextval@WYPOZYCZALNIA_ADAM
+  INTO :new.ID_Wypozyczalni
+  FROM dual;
+END;
+/
 
 --Snapshot of rentalHouses for slave
 --Creating snapshot log for models
@@ -96,24 +117,10 @@ BEGIN
 END;
 /
 
---PEER-TO-PEER SNAPSHOTS----------------------------------------
---Creating snapshot log for customers 2 direction to 1 MASTER
-BEGIN
-    BEGIN
-         EXECUTE IMMEDIATE 'DROP SNAPSHOT LOG ON Klienci';
-    EXCEPTION
-         WHEN OTHERS THEN
-            IF SQLCODE != -12002 THEN
-                 RAISE;
-            END IF;
-    END;
-    EXECUTE IMMEDIATE 'CREATE SNAPSHOT LOG
-        ON Klienci
-        WITH PRIMARY KEY
-        INCLUDING NEW VALUES';
-END;
-/
---Snapshot of customers from 1 MASTER
+--PEER-TO-PEER SNAPSHOTS-----------------------------------
+--Creating snapshot log for customers 1 direction
+-- IN COMMON FILE 
+--Snapshot of customers from 2 MASTER
 BEGIN
     BEGIN
          EXECUTE IMMEDIATE 'DROP SNAPSHOT KlienciMaster1';
@@ -129,6 +136,28 @@ BEGIN
         NEXT sysdate + (1/(24*60))
         AS
         SELECT * FROM klienci@WYPOZYCZALNIA_ADAM
+        ';
+END;
+/
+
+--Creating snapshot log for addresses 1 direction
+-- IN COMMON FILE
+--Snapshot of addresses from 2 MASTER
+BEGIN
+    BEGIN
+         EXECUTE IMMEDIATE 'DROP SNAPSHOT AdresyMaster1';
+    EXCEPTION
+         WHEN OTHERS THEN
+            IF SQLCODE != -12003 THEN
+                 RAISE;
+            END IF;
+    END;
+    EXECUTE IMMEDIATE 'CREATE SNAPSHOT AdresyMaster1
+        BUILD IMMEDIATE 
+        REFRESH FAST
+        NEXT sysdate + (1/(24*60))
+        AS
+        SELECT * FROM adresy@WYPOZYCZALNIA_ADAM
         ';
 END;
 /
