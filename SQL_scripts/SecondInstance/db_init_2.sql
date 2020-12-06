@@ -69,7 +69,7 @@ BEGIN
     EXECUTE IMMEDIATE 'CREATE SNAPSHOT WypozyczalnieMV
         BUILD IMMEDIATE 
         REFRESH FAST 
-        NEXT sysdate + (1/(24*60*10))
+        NEXT sysdate + (1/(24*60*6))
         AS
         SELECT * FROM wypozyczalnieServer';
 END;
@@ -88,7 +88,7 @@ BEGIN
     EXECUTE IMMEDIATE 'CREATE SNAPSHOT ModeleMV
         BUILD IMMEDIATE 
         REFRESH FAST
-        NEXT sysdate + (1/(24*60*10))
+        NEXT sysdate + (1/(24*60*6))
         AS
         SELECT * FROM modeleServer
         ';
@@ -111,7 +111,7 @@ BEGIN
     EXECUTE IMMEDIATE 'CREATE SNAPSHOT KlienciMaster1
         BUILD IMMEDIATE 
         REFRESH FAST
-        NEXT sysdate + (1/(24*60))
+        NEXT sysdate + (1/(24*60*6))
         AS
         SELECT * FROM klienci@WYPOZYCZALNIA_ADAM
         ';
@@ -133,7 +133,7 @@ BEGIN
     EXECUTE IMMEDIATE 'CREATE SNAPSHOT AdresyMaster1
         BUILD IMMEDIATE 
         REFRESH FAST
-        NEXT sysdate + (1/(24*60))
+        NEXT sysdate + (1/(24*60*6))
         AS
         SELECT * FROM adresy@WYPOZYCZALNIA_ADAM
         ';

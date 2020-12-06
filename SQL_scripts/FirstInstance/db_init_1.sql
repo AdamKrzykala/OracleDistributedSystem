@@ -340,13 +340,12 @@ BEGIN
     EXECUTE IMMEDIATE 'CREATE SNAPSHOT KlienciMaster2
         BUILD IMMEDIATE 
         REFRESH FAST
-        NEXT sysdate + (1/(24*60*10))
+        NEXT sysdate + (1/(24*60*6))
         AS
         SELECT * FROM klienci@WYPOZYCZALNIA_MICHAL
         ';
 END;
 /
-
 --Creating snapshot log for addresses 1 direction
 -- IN COMMON FILE
 --Snapshot of addresses from 2 MASTER
@@ -362,7 +361,7 @@ BEGIN
     EXECUTE IMMEDIATE 'CREATE SNAPSHOT AdresyMaster2
         BUILD IMMEDIATE 
         REFRESH FAST
-        NEXT sysdate + (1/(24*60*10))
+        NEXT sysdate + (1/(24*60*6))
         AS
         SELECT * FROM adresy@WYPOZYCZALNIA_MICHAL
         ';
