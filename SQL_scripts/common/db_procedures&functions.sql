@@ -1,4 +1,4 @@
---PROCEDURES CONFIGURATION-----------------------------------------------------
+
 create or replace procedure insert_new_adres(input_KodPocztowy in adresy.kodpocztowy%TYPE,
                                              input_Miejscowosc in adresy.miejscowosc%TYPE,
                                              input_Ulica in adresy.ulica%TYPE,
@@ -300,8 +300,8 @@ BEGIN
                                                                  karazaspoznienie = kara_za_spoznienie AND
                                                                  zwrotkaucji = input_ZwrotKaucji;
                                                                  
-            UPDATE wypozyczenia@wypozyczalnia_michal SET id_zwrotu = index_zwrotu WHERE id_wypozyczenia = index_wypozyczenia;
-            UPDATE wypozyczenia@wypozyczalnia_adam SET id_zwrotu = index_zwrotu WHERE id_wypozyczenia = index_wypozyczenia;
+            UPDATE wypozyczenia@WYPOZYCZALNIA_MICHAL SET id_zwrotu = index_zwrotu WHERE id_wypozyczenia = index_wypozyczenia;
+            UPDATE wypozyczenia@WYPOZYCZALNIA_ADAM SET id_zwrotu = index_zwrotu WHERE id_wypozyczenia = index_wypozyczenia;
         END IF;
     END;
 END;

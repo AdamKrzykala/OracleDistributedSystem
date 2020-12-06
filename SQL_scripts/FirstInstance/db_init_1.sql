@@ -93,68 +93,6 @@ BEGIN
 END;
 /
 
---Customers id sequence creating 
-BEGIN
-    BEGIN
-         EXECUTE IMMEDIATE 'DROP SEQUENCE CUSTOMER_ID_SEQUENCE';
-    EXCEPTION
-         WHEN OTHERS THEN
-                IF SQLCODE != -2289 THEN
-                     RAISE;
-                END IF;
-    END;
-    EXECUTE IMMEDIATE 'CREATE SEQUENCE CUSTOMER_ID_SEQUENCE 
-        INCREMENT BY 1 
-        START WITH 1 
-        MAXVALUE 99999999999999 
-        MINVALUE 1 
-        NOCACHE 
-        ORDER';
-END;
-/
-
---Customer id insertion trigger creating
-CREATE OR REPLACE TRIGGER klienci_on_insert
-  BEFORE INSERT ON klienci
-  FOR EACH ROW
-BEGIN
-  SELECT CUSTOMER_ID_SEQUENCE.nextval
-  INTO :new.ID_Klienta
-  FROM dual;
-END;
-/
-
---Addresses id sequence creating 
-BEGIN
-    BEGIN
-         EXECUTE IMMEDIATE 'DROP SEQUENCE ADDRESS_ID_SEQUENCE';
-    EXCEPTION
-         WHEN OTHERS THEN
-                IF SQLCODE != -2289 THEN
-                     RAISE;
-                END IF;
-    END;
-    EXECUTE IMMEDIATE 'CREATE SEQUENCE ADDRESS_ID_SEQUENCE 
-        INCREMENT BY 1 
-        START WITH 1 
-        MAXVALUE 99999999999999 
-        MINVALUE 1 
-        NOCACHE 
-        ORDER';
-END;
-/
-
---Address id insertion trigger creating
-CREATE OR REPLACE TRIGGER adresy_on_insert
-  BEFORE INSERT ON adresy
-  FOR EACH ROW
-BEGIN
-  SELECT ADDRESS_ID_SEQUENCE.nextval
-  INTO :new.ID_Adresu
-  FROM dual;
-END;
-/
-
 --RentalHouses table creating
 BEGIN
     BEGIN
@@ -283,6 +221,69 @@ CREATE OR REPLACE PUBLIC SYNONYM remoteRentals FOR wypozyczenia@WYPOZYCZALNIA_MI
 --Creating remote database synonym to zwroty
 CREATE OR REPLACE PUBLIC SYNONYM remoteReturns FOR zwroty@WYPOZYCZALNIA_MICHAL;
 
+--Customers id sequence creating 
+BEGIN
+    BEGIN
+         EXECUTE IMMEDIATE 'DROP SEQUENCE CUSTOMER_ID_SEQUENCE';
+    EXCEPTION
+         WHEN OTHERS THEN
+                IF SQLCODE != -2289 THEN
+                     RAISE;
+                END IF;
+    END;
+    EXECUTE IMMEDIATE 'CREATE SEQUENCE CUSTOMER_ID_SEQUENCE 
+        INCREMENT BY 1 
+        START WITH 1 
+        MAXVALUE 99999999999999 
+        MINVALUE 1 
+        NOCACHE 
+        ORDER';
+END;
+/
+
+--Addresses id sequence creating 
+BEGIN
+    BEGIN
+         EXECUTE IMMEDIATE 'DROP SEQUENCE ADDRESS_ID_SEQUENCE';
+    EXCEPTION
+         WHEN OTHERS THEN
+                IF SQLCODE != -2289 THEN
+                     RAISE;
+                END IF;
+    END;
+    EXECUTE IMMEDIATE 'CREATE SEQUENCE ADDRESS_ID_SEQUENCE 
+        INCREMENT BY 1 
+        START WITH 1 
+        MAXVALUE 99999999999999 
+        MINVALUE 1 
+        NOCACHE 
+        ORDER';
+END;
+/
+
+--Customer id insertion trigger creating
+CREATE OR REPLACE TRIGGER klienci_on_insert
+  BEFORE INSERT ON klienci
+  FOR EACH ROW
+BEGIN
+  SELECT CUSTOMER_ID_SEQUENCE.nextval
+  INTO :new.ID_Klienta
+  FROM dual;
+END;
+/
+
+--Address id insertion trigger creating
+CREATE OR REPLACE TRIGGER adresy_on_insert
+  BEFORE INSERT ON adresy
+  FOR EACH ROW
+BEGIN
+  SELECT ADDRESS_ID_SEQUENCE.nextval
+  INTO :new.ID_Adresu
+  FROM dual;
+END;
+/
+
+
 --Creating snapshot log for rentalHouses
 BEGIN
     BEGIN
@@ -319,7 +320,43 @@ BEGIN
         INCLUDING NEW VALUES';
 END;
 /
-
+--PEER-TO-PEER SNAPSHOTS-----------------------------------
+--Creating snapshot log for customers 1 direction
+BEGIN
+    BEGIN
+         EXECUTE IMMEDIATE 'DROP SNAPSHOT LOG ON Klienci';
+    EXCEPTION
+         WHEN OTHERS THEN
+            IF SQLCODE != -12002 THEN
+                 RAISE;
+            END IF;
+    END;
+    EXECUTE IMMEDIATE 'CREATE SNAPSHOT LOG
+        ON Klienci
+        WITH PRIMARY KEY
+        INCLUDING NEW VALUES';
+END;
+/
+--Snapshot of customers from 2 MASTER
+BEGIN
+    BEGIN
+         EXECUTE IMMEDIATE 'DROP SNAPSHOT KlienciMaster2';
+    EXCEPTION
+         WHEN OTHERS THEN
+            IF SQLCODE != -12003 THEN
+                 RAISE;
+            END IF;
+    END;
+    EXECUTE IMMEDIATE 'CREATE SNAPSHOT KlienciMaster2
+        BUILD IMMEDIATE 
+        REFRESH FAST
+        NEXT sysdate + (1/(24*60))
+        AS
+        SELECT * FROM klienci@WYPOZYCZALNIA_MICHAL
+        ';
+END;
+/
+-------------------------------------------------------
 ----Creating refreshing group for rentalHouses snapshot
 ----Refreshing each one day or after inserting
 --BEGIN

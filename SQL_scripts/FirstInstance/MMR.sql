@@ -1,3 +1,9 @@
+--External database link creating
+CREATE DATABASE LINK ORCL6
+    CONNECT TO c##mnowak 
+    IDENTIFIED BY mnowak5 
+    USING 'orcl6.us.acme.com';
+    
 SELECT count(*) FROM dba_objects WHERE status = 'INVALID'
 AND owner IN ('SYS', 'SYSTEM');
 
@@ -26,10 +32,25 @@ dbms_defer_sys.schedule_purge(
 end;
 /
 
+BEGIN
+ DBMS_REPCAT.DROP_MASTER_REPGROUP(
+ gname => '"GROUP1"');
+END;
+/
+
+BEGIN
+ DBMS_REPCAT.DROP_MASTER_REPOBJECT(
+ type => 'TABLE',
+ oname => '"KLIENCI"',
+ sname => '"C##ADAM"');
+END;
+/
+
+
 --Creating MMR
 BEGIN
  DBMS_REPCAT.CREATE_MASTER_REPGROUP(
- gname => '"GROUP2"',
+ gname => '"GROUP1"',
  qualifier => '',
  group_comment => '');
 END;
@@ -37,7 +58,7 @@ END;
 
 BEGIN
  DBMS_REPCAT.CREATE_MASTER_REPOBJECT(
- gname => '"GROUP2"',
+ gname => '"GROUP1"',
  type => 'TABLE',
  oname => '"KLIENCI"',
  sname => '"C##ADAM"');
@@ -58,19 +79,47 @@ SELECT * FROM dba_repcatlog;
 
 BEGIN
  DBMS_REPCAT.RESUME_MASTER_ACTIVITY(
- gname => '"GROUP2"');
+ gname => '"GROUP1"');
 END;
 /
 
 BEGIN
  DBMS_REPCAT.SUSPEND_MASTER_ACTIVITY(
- gname => '"GROUP2"');
+ gname => '"GROUP1"');
 END;
 /
+SELECT name, value, description FROM v$parameter WHERE name = 'compatible';
+SELECT * FROM v$version;
+
+execute dbms_repcat_admin.grant_admin_any_repgroup ('C##ADAM');
+execute dbms_repcat_admin.grant_admin_any_repschema ('C##ADAM');
+
+execute dbms_defer_sys.register_propagator('C##ADAM');
+
+grant execute any procedure to C##ADAM;
+
+execute dbms_repcat_admin.grant_admin_any_repgroup('C##ADAM');
+
+execute dbms_repcat_admin.grant_admin_any_schema(username => '"C##ADAM"');
+
+grant comment any table to C##ADAM;
+
+grant lock any table to C##ADAM;
+
+grant select any dictionary to C##ADAM;
+
+select object_name,object_type from user_objects where object_type='DATABASE LINK';
+
+show user;
+
+show parameter global_names;
+
+Alter system set global_names = true scope=both;
 
 BEGIN
  DBMS_REPCAT.ADD_MASTER_DATABASE(
- gname => '"GROUP2"',
-master => 'WYPOZYCZALNIA_MICHAL');
+    gname => '"GROUP1"',
+    master => '"ORCL6"');
 END;
 /
+select count(*) from user_objects@WYPOZYCZALNIA_MICHAL;

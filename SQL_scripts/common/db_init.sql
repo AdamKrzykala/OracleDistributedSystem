@@ -1,13 +1,16 @@
+--drop DATABASE link WYPOZYCZALNIA_MICHAL;
+--drop DATABASE link WYPOZYCZALNIA_ADAM;
+
 CREATE DATABASE LINK WYPOZYCZALNIA_ADAM 
     CONNECT TO c##adam 
-    IDENTIFIED BY adam 
+    IDENTIFIED BY adam
     USING 'ORCLADAM';
 
 --External database link creating
-CREATE DATABASE LINK WYPOZYCZALNIA_MICHAL 
+CREATE DATABASE LINK WYPOZYCZALNIA_MICHAL
     CONNECT TO c##mnowak 
-    IDENTIFIED BY mnowak5 
-    USING 'ORCL6';
+    IDENTIFIED BY mnowak5
+    USING 'ORCLMICHAL';
     
 --TABLES CONFIGURATION----------------------------------------------------------
 
@@ -30,31 +33,29 @@ BEGIN
         PESEL           VARCHAR(11)     not null,
         NumerTel        VARCHAR(9)      not null,
         KatPrawaJazdy   CHAR(1)         not null,
-        CONSTRAINT klienci_pk PRIMARY KEY(ID_Klienta)
+        PRIMARY KEY(ID_Klienta)
     )';
 END;
 /
---Vehicles table creating
+
+--Address table creating
 BEGIN
     BEGIN
-         EXECUTE IMMEDIATE 'DROP TABLE pojazdy';
+        EXECUTE IMMEDIATE 'DROP TABLE Adresy';
     EXCEPTION
          WHEN OTHERS THEN
-                IF SQLCODE != -942 THEN
-                     RAISE;
-                END IF;
+            IF SQLCODE != -942 THEN
+                 RAISE;
+            END IF;
     END;
-    EXECUTE IMMEDIATE 'CREATE TABLE pojazdy (
-        ID_Pojazdu              INT             not null,
-        ID_Modelu               INT             not null,
-        NumerVIN                VARCHAR(17)     not null,
-        NumerRejestracyjny      VARCHAR(9)      not null,
-        Rocznik                 DATE            not null,
-        Przebieg                INT             not null, 
-        DataWaznosciPrzegladu   DATE            null,
-        Uszkodzony              CHAR(3)         null,
-        AktualnaWypozyczalnia   INT             null,
-        CONSTRAINT pojazdy_pk PRIMARY KEY(ID_pojazdu)
+    EXECUTE IMMEDIATE 'CREATE TABLE Adresy (
+        ID_Adresu           INT             NOT NULL,
+        KodPocztowy         VARCHAR2(6)     not null,
+        Miejscowosc         VARCHAR2(30)    not null,
+        Ulica               VARCHAR2(30)    not null,
+        NumerDomu           INT             not null,
+        NumerMieszkania     INT             null,
+        PRIMARY KEY(ID_Adresu)
     )';
 END;
 /
@@ -78,7 +79,7 @@ BEGIN
         TerminWypozyczenia      DATE        not null,
         PlanowanyTerminZwrotu   DATE        not null,
         PobranaKaucja           FLOAT       not null,
-        CONSTRAINT wypozyczenia_pk PRIMARY KEY(ID_Wypozyczenia)
+        PRIMARY KEY(ID_Wypozyczenia)
     )';
 END;
 /
@@ -104,24 +105,28 @@ BEGIN
 END;
 /
 
---Address table creating
+
+--Vehicles table creating
 BEGIN
     BEGIN
-        EXECUTE IMMEDIATE 'DROP TABLE Adresy';
+         EXECUTE IMMEDIATE 'DROP TABLE pojazdy';
     EXCEPTION
          WHEN OTHERS THEN
-            IF SQLCODE != -942 THEN
-                 RAISE;
-            END IF;
+                IF SQLCODE != -942 THEN
+                     RAISE;
+                END IF;
     END;
-    EXECUTE IMMEDIATE 'CREATE TABLE Adresy (
-        ID_Adresu           INT             NOT NULL,
-        KodPocztowy         VARCHAR2(6)     not null,
-        Miejscowosc         VARCHAR2(30)    not null,
-        Ulica               VARCHAR2(30)    not null,
-        NumerDomu           INT             not null,
-        NumerMieszkania     INT             null,
-        CONSTRAINT adresy_pk PRIMARY KEY(ID_Adresu)
+    EXECUTE IMMEDIATE 'CREATE TABLE pojazdy (
+        ID_Pojazdu              INT             not null,
+        ID_Modelu               INT             not null,
+        NumerVIN                VARCHAR(17)     not null,
+        NumerRejestracyjny      VARCHAR(9)      not null,
+        Rocznik                 DATE            not null,
+        Przebieg                INT             not null, 
+        DataWaznosciPrzegladu   DATE            null,
+        Uszkodzony              CHAR(3)         null,
+        AktualnaWypozyczalnia   INT             null,
+        PRIMARY KEY(ID_pojazdu)
     )';
 END;
 /
@@ -134,10 +139,10 @@ CREATE OR REPLACE PUBLIC SYNONYM wypozyczalnieServer FOR wypozyczalnie@WYPOZYCZA
 
 --FOREIGN KEYS CONFIGURATION----------------------------------------------------
 BEGIN
-    EXECUTE IMMEDIATE 'ALTER TABLE Klienci ADD CONSTRAINT fk_KlientAdres FOREIGN KEY (ID_Adresu) REFERENCES Adresy(ID_Adresu)';
-    EXECUTE IMMEDIATE 'ALTER TABLE Wypozyczenia ADD CONSTRAINT fk_WypozyczenieKlient FOREIGN KEY (ID_Klienta) REFERENCES Klienci(ID_Klienta)';
     EXECUTE IMMEDIATE 'ALTER TABLE Wypozyczenia ADD CONSTRAINT fk_WypozyczeniePojazd FOREIGN KEY (ID_Pojazdu) REFERENCES Pojazdy(ID_Pojazdu)';
     EXECUTE IMMEDIATE 'ALTER TABLE Wypozyczenia ADD CONSTRAINT fk_WypozyczenieZwrot FOREIGN KEY (ID_Zwrotu) REFERENCES Zwroty(ID_Zwrotu)';
+    EXECUTE IMMEDIATE 'ALTER TABLE Klienci ADD CONSTRAINT fk_KlientAdres FOREIGN KEY (ID_Adresu) REFERENCES Adresy(ID_Adresu)';
+    EXECUTE IMMEDIATE 'ALTER TABLE Wypozyczenia ADD CONSTRAINT fk_WypozyczenieKlient FOREIGN KEY (ID_Klienta) REFERENCES Klienci(ID_Klienta)';
 END;
 /
 --INDEXES CONFIGURATION---------------------------------------------------------
