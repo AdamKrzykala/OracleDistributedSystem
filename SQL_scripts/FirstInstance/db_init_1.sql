@@ -339,7 +339,7 @@ BEGIN
     END;
     EXECUTE IMMEDIATE 'CREATE SNAPSHOT KlienciMaster2
         BUILD IMMEDIATE 
-        REFRESH FAST
+        REFRESH FORCE
         NEXT sysdate + (1/(24*60*6))
         AS
         SELECT * FROM klienci@WYPOZYCZALNIA_MICHAL
@@ -360,7 +360,7 @@ BEGIN
     END;
     EXECUTE IMMEDIATE 'CREATE SNAPSHOT AdresyMaster2
         BUILD IMMEDIATE 
-        REFRESH FAST
+        REFRESH FORCE
         NEXT sysdate + (1/(24*60*6))
         AS
         SELECT * FROM adresy@WYPOZYCZALNIA_MICHAL
