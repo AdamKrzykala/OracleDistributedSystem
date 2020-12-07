@@ -271,6 +271,11 @@ BEGIN
     WHERE input_ID_Wypozyczenia = wypozyczenia.id_wypozyczenia;
 END;
 /
+create or replace procedure delete_wypozyczenie(input_ID_Wypozyczenia in wypozyczenia.id_wypozyczenia%TYPE) IS 
+BEGIN
+    DELETE FROM Wypozyczenia WHERE input_ID_Wypozyczenia = wypozyczenia.id_wypozyczenia;
+END;
+/
 create or replace procedure insert_new_zwrot(input_NumerWypozyczalni in wypozyczalnieServer.numerwypozyczalni%TYPE,
                                              input_Zaplacono in zwroty.zaplacono%TYPE,
                                              input_ZwrotKaucji in zwroty.zwrotkaucji%TYPE,
