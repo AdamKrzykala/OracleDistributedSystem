@@ -94,11 +94,11 @@ BEGIN
             END IF;
     END;
     EXECUTE IMMEDIATE 'CREATE TABLE Zwroty (
-        ID_Zwrotu           INT         not null,
-        ID_Wypozyczalni     INT         not null,
-        TerminZwrotu        DATE        not null,
+        ID_Zwrotu           INT             not null,
+        ID_Wypozyczalni     INT             not null,
+        TerminZwrotu        DATE            not null,
         Zaplacono           VARCHAR2(3)     not null,
-        KaraZaSpoznienie    FLOAT(2)    null,
+        KaraZaSpoznienie    FLOAT(2)        null,
         ZwrotKaucji         VARCHAR2(3)     not null,
         PRIMARY KEY(ID_Zwrotu)
     )';
@@ -126,7 +126,12 @@ BEGIN
         Uszkodzony              CHAR(3)         null,
         AktualnaWypozyczalnia   INT             null,
         PRIMARY KEY(ID_pojazdu)
-    )';
+    ) PARTITION BY RANGE (Rocznik)
+     ( PARTITION YEAR_1990 VALUES LESS THAN (TO_DATE(''1991-01-01'',''YYYY-MM-DD''))
+     )';
+     
+     EXECUTE IMMEDIATE 'ALTER TABLE pojazdy ENABLE ROW MOVEMENT';
+     EXECUTE IMMEDIATE 'ALTER TABLE pojazdy SET INTERVAL(NUMTOYMINTERVAL(1, ''YEAR''))';
 END;
 /
 

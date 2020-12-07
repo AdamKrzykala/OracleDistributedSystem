@@ -148,6 +148,7 @@ BEGIN
     DECLARE 
     index_value INT := 0;
     cnt INT := 0;
+    current_usr VARCHAR2(30) := '';
     BEGIN
         SELECT COUNT(*) INTO cnt FROM Pojazdy WHERE input_NumerVIN in pojazdy.numervin;
         IF(cnt = 0) THEN
@@ -160,6 +161,9 @@ BEGIN
 
             INSERT INTO Pojazdy(id_modelu, numervin, numerrejestracyjny, rocznik, przebieg, datawaznosciprzegladu, uszkodzony, aktualnawypozyczalnia)
             VALUES(index_value, input_NumerVIN, input_NumerRej, input_Rocznik, input_Przebieg, input_DataPrzegladu, input_Uszkodzony, input_AktualnaWypozyczalnia);
+            
+            select user into current_usr from dual;
+            DBMS_STATS.GATHER_TABLE_STATS(current_usr,'POJAZDY');
         END IF;
     END;
 END;
