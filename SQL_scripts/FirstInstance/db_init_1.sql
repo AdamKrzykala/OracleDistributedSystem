@@ -388,5 +388,11 @@ SELECT * FROM adresy
 UNION ALL
 SELECT * FROM adresymaster2;
 
+--Creating partitioned view of locally available vehicles
+CREATE OR REPLACE VIEW SHOW_AVAILABLE_VEHICLES AS
+SELECT * FROM remoteVehicles WHERE remoteVehicles.AktualnaWypozyczalnia = 0
+UNION ALL
+SELECT * FROM pojazdy WHERE pojazdy.AktualnaWypozyczalnia = 0;
+
 
 COMMIT;
