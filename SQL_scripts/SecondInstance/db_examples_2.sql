@@ -8,9 +8,9 @@ execute delete_klient(/*TU WPISAC JEGO LOKALNE ID*/);
 
 -- POJAZD
 --dodanie pojazdu
-execute insert_new_pojazd('A1234567890PP36O1', 'DW9999', TO_DATE('2011-05-03', 'yyyy-mm-dd'), 325146, TO_DATE('2021-01-03', 'yyyy-mm-dd'), '0', 0, 'Mercedes W220', 2000, 13, 'B', 499);
+execute insert_new_pojazd('A1234567890PP36O1', 'DBL9999', TO_DATE('2011-05-03', 'yyyy-mm-dd'), 325146, TO_DATE('2021-01-03', 'yyyy-mm-dd'), '0', 0, 'Mercedes W220', 2000, 13, 'B', 499);
 --aktualizacja przebiegu
-execute update_pojazd(/*TU WPISAC JEGO LOKALNE ID*/'A1234567890QW36O1', 'DW9999', TO_DATE('2011-05-03', 'yyyy-mm-dd'), 411111, TO_DATE('2021-01-03', 'yyyy-mm-dd'), '0');
+execute update_pojazd(/*TU WPISAC JEGO LOKALNE ID*/'A1234567890QW36O1', 'DBL9999', TO_DATE('2011-05-03', 'yyyy-mm-dd'), 411111, TO_DATE('2021-01-03', 'yyyy-mm-dd'), '0');
 --usuniecie pojazdu
 execute delete_pojazd(/*TU WPISAC JEGO LOKALNE ID*/);
 
