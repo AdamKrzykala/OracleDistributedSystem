@@ -35,7 +35,8 @@ END;
 /
 create or replace procedure delete_adres(input_ID_Adresu in adresy.id_adresu%TYPE) IS 
 BEGIN
-    DELETE FROM Adresy WHERE input_ID_Adresu = adresy.id_adresu;
+    DELETE FROM Adresy@WYPOZYCZALNIA_ADAM WHERE input_ID_Adresu = adresy.id_adresu;
+    DELETE FROM Adresy@WYPOZYCZALNIA_MICHAL WHERE input_ID_Adresu = adresy.id_adresu;
 END;
 /
 create or replace procedure insert_new_klient(input_Imie in klienci.imie%TYPE,
@@ -88,7 +89,8 @@ END;
 /
 create or replace procedure delete_klient(input_ID_Klienta in klienci.id_klienta%TYPE) IS 
 BEGIN
-    DELETE FROM Klienci WHERE input_ID_Klienta = klienci.id_klienta;
+    DELETE FROM Klienci@WYPOZYCZALNIA_ADAM WHERE input_ID_Klienta = klienci.id_klienta;
+    DELETE FROM Klienci@WYPOZYCZALNIA_MICHAL WHERE input_ID_Klienta = klienci.id_klienta;
 END;
 /
 create or replace procedure insert_new_model(input_Model in ModeleServer.model%TYPE,

@@ -90,7 +90,7 @@ BEGIN
         REFRESH FORCE
         NEXT sysdate + (1/(24*60*6))
         AS
-        SELECT * FROM modeleServer
+        SELECT DISTINCT * FROM modeleServer
         ';
 END;
 /
