@@ -284,6 +284,7 @@ BEGIN
     index_zwrotu INT := 0;
     index_wypozyczenia INT := 0;
     termin_zwrotu DATE := CURRENT_DATE;
+    planowany_termin_zwrotu DATE;
     kara_za_spoznienie zwroty.karazaspoznienie%TYPE := 0;
     cnt INT := 0;
     BEGIN
@@ -295,6 +296,12 @@ BEGIN
         SELECT id_wypozyczenia INTO index_wypozyczenia FROM SHOW_ALL_ACTIVE_RENTALS WHERE id_pojazdu = index_pojazdu;
         
         IF(cnt = 1) THEN
+            SELECT PlanowanyTerminZwrotu INTO planowany_termin_zwrotu from Wypozyczenia WHERE wypozyczenia.id_wypozyczenia = index_wypozyczenia;
+            
+            IF(planowany_termin_zwrotu - termin_zwrotu < 0) THEN
+                kara_za_spoznienie := 3000;
+            END IF;
+            
             INSERT INTO Zwroty(id_wypozyczalni, terminzwrotu, zaplacono, karazaspoznienie, zwrotkaucji)
             VALUES(index_wypozyczalni, termin_zwrotu, input_Zaplacono, kara_za_spoznienie, input_ZwrotKaucji);
             
